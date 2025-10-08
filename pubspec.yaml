@@ -1,0 +1,55 @@
+name: xpressatec
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  dio: ^5.9.0
+  flutter:
+    sdk: flutter
+  get: ^4.7.2
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.5.3
+  web_socket_channel: ^3.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Cocogoose
+      fonts:
+        - asset: assets/fonts/cocogoose-regular.ttf
+
+
+
+  assets:
+    - assets/
+    - assets/images/
+    - assets/images/amarillo/
+    - assets/images/azul/
+    - assets/images/cafe/
+    - assets/images/cafe/casa/
+    - assets/images/cafe/escuela/
+    - assets/images/morado/
+    - assets/images/naranja/
+    - assets/images/rojo/
+    - assets/images/rojo/Días/
+    - assets/images/rojo/Estaciones/
+    - assets/images/rojo/Meses/
+    - assets/images/rojo/Tiempos/
+    - assets/images/rosa/
+    - assets/images/rosa/alimentos/
+    - assets/images/rosa/higiene_personal/
+    - assets/images/rosa/objetos_del_hogar/
+    - assets/images/rosa/objetos_personales/
+    - assets/images/rosa/vestimenta/
+    - assets/images/verde/
+    - assets/images/icon/
