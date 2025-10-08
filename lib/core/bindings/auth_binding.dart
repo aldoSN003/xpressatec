@@ -5,6 +5,6 @@ import 'package:xpressatec/presentation/features/auth/controllers/auth_controlle
 class AuthBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => AuthController());
+     Get.lazyPut<AuthController>(() => AuthController());
   }
 }
