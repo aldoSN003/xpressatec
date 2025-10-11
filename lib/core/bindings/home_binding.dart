@@ -9,6 +9,8 @@ import 'package:xpressatec/presentation/features/profile/controllers/profile_con
 import 'package:xpressatec/presentation/features/statistics/controllers/statistics_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/controllers/teacch_controller.dart';
 
+import '../../presentation/features/teacch_board/controllers/tts_controller.dart';
+
 
 
 class HomeBinding extends Bindings {
@@ -25,5 +27,6 @@ class HomeBinding extends Bindings {
     Get.lazyPut(() => StatisticsController());
     Get.lazyPut(() => ProfileController());
     Get.lazyPut(() => AuthController());
+    Get.lazyPut<TtsController>(() => TtsController());
   }
 }
