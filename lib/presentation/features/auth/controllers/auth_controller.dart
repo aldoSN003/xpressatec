@@ -177,6 +177,31 @@ class AuthController extends GetxController {
       print('✗ Error loading user: $e');
     }
   }
+
+
+
+  Future<void> checkAutoLogin() async {
+    // A small delay to let the splash screen be visible
+    await Future.delayed(const Duration(seconds: 2));
+
+    try {
+      final user = await getCurrentUserUseCase();
+      if (user != null) {
+        currentUser.value = user;
+        print('✓ Auto-login successful for: ${user.nombre}');
+        // Navigate to home since we found a user
+        Get.offAllNamed(Routes.home);
+      } else {
+        // Navigate to login if no user is in cache
+        Get.offAllNamed(Routes.login);
+      }
+    } catch (e) {
+      print('✗ No cached user found or error loading user: $e');
+      // Navigate to login on any error
+      Get.offAllNamed(Routes.login);
+    }
+  }
+
 }
 
 

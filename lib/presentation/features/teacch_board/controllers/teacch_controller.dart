@@ -63,7 +63,7 @@ class TeacchController extends GetxController {
 
     if (phrase != null) {
       // Play the generated phrase using TTS
-      await ttsController.tellPhrase11labs(phrase);
+      await ttsController.tellPhraseWithPreview(phrase);
 
       // Show dialog with retry, replay, and save options
       Get.dialog(

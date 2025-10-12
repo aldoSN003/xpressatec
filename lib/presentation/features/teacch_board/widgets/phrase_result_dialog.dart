@@ -74,7 +74,7 @@ class PhraseResultDialog extends StatelessWidget {
                     final newPhrase = await llmController.generatePhrase(words);
                     if (newPhrase != null) {
                       // Automatically play the new phrase
-                      await ttsController.tellPhrase11labs(newPhrase);
+                      await ttsController.tellPhraseWithPreview(newPhrase);
                     } else {
                       Get.snackbar(
                         'Error',
@@ -91,7 +91,7 @@ class PhraseResultDialog extends StatelessWidget {
                   label: 'Repetir',
                   color: Colors.blue,
                   onPressed: () async {
-                    await ttsController.tellPhrase11labs(
+                    await ttsController.tellPhraseWithPreview(
                       llmController.generatedPhrase.value,
                     );
                   },

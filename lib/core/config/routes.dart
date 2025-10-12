@@ -2,14 +2,20 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:xpressatec/core/bindings/auth_binding.dart';
 import 'package:xpressatec/core/bindings/home_binding.dart';
 import 'package:xpressatec/presentation/features/auth/screens/login_screen.dart';
-import 'package:xpressatec/presentation/features/auth/screens/register_screen.dart';
+
 import 'package:xpressatec/presentation/features/home/screens/home_screen.dart';
-import 'package:xpressatec/presentation/features/profile/screens/link_therapist_screen.dart';
+
+
 import 'package:xpressatec/presentation/features/settings/screens/about_screen.dart';
 import 'package:xpressatec/presentation/features/settings/screens/settings_screen.dart';
+import 'package:xpressatec/presentation/features/splash/screens/splash_screen.dart';
+
+import '../../presentation/features/auth/screens/register_screen.dart';
+import '../../presentation/features/profile/screens/link_therapist_screen.dart';
 
 // Route constants
 class Routes {
+  static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
@@ -20,6 +26,10 @@ class Routes {
 
 class AppRoutes {
   static final routes = [
+    GetPage(
+      name: Routes.splash,
+      page: () => const SplashScreen(),
+    ),
     GetPage(
       name: Routes.login,
       page: () => const LoginScreen(),

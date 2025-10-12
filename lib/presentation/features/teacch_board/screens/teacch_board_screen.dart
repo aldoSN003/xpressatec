@@ -31,7 +31,7 @@ class TeacchBoardScreen extends StatelessWidget {
           showLabel: true,
           onTap: () async {
             await controller.loadCategoryDetails(category);
-            ttsController.tellPhrase11labs(category.name);
+            ttsController.tellPhraseWithPreview(category.name);
 
             Get.bottomSheet(
               FractionallySizedBox(

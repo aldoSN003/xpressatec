@@ -56,7 +56,7 @@ class CategoryDetailSheet extends StatelessWidget {
 
                 // ✅ ADD THIS LINE - Añadir el item seleccionado al controller
                 controller.addSelectedItem(path, name.capitalizeFirst!);
-                ttsController.tellPhrase11labs(name);
+                ttsController.tellPhraseWithPreview(name);
 
 
                 Get.back(); // Cerrar el modal al seleccionar

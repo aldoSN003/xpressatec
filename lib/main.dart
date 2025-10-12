@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+      initialRoute: Routes.splash,
       getPages: AppRoutes.routes,
       initialBinding: InitialBinding(),
     );
