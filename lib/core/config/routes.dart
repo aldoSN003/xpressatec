@@ -1,4 +1,3 @@
-
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:xpressatec/core/bindings/auth_binding.dart';
 import 'package:xpressatec/core/bindings/home_binding.dart';
@@ -9,33 +8,43 @@ import 'package:xpressatec/presentation/features/profile/screens/link_therapist_
 import 'package:xpressatec/presentation/features/settings/screens/about_screen.dart';
 import 'package:xpressatec/presentation/features/settings/screens/settings_screen.dart';
 
+// Route constants
+class Routes {
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String home = '/home';
+  static const String linkTherapist = '/link-therapist';
+  static const String settings = '/settings';
+  static const String about = '/about';
+}
+
 class AppRoutes {
   static final routes = [
     GetPage(
-      name: '/login',
+      name: Routes.login,
       page: () => const LoginScreen(),
       binding: AuthBinding(),
     ),
     GetPage(
-      name: '/register',
+      name: Routes.register,
       page: () => const RegisterScreen(),
       binding: AuthBinding(),
     ),
     GetPage(
-      name: '/home',
+      name: Routes.home,
       page: () => const HomeScreen(),
       binding: HomeBinding(),
     ),
     GetPage(
-      name: '/link-therapist',
+      name: Routes.linkTherapist,
       page: () => const LinkTherapistScreen(),
     ),
     GetPage(
-      name: '/settings',
+      name: Routes.settings,
       page: () => const SettingsScreen(),
     ),
     GetPage(
-      name: '/about',
+      name: Routes.about,
       page: () => const AboutScreen(),
     ),
   ];

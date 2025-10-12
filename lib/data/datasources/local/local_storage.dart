@@ -211,4 +211,53 @@ class LocalStorage {
   bool containsKey(String key) {
     return _prefs.containsKey(key);
   }
+
+
+
+// ==================== USER DATA ====================
+
+  /// Save complete user data
+  Future<void> saveUser(Map<String, dynamic> userData) async {
+    try {
+      final String encoded = jsonEncode(userData);
+      await _prefs.setString('user_data', encoded);
+      print('✓ User data saved');
+    } catch (e) {
+      print('✗ Error saving user data: $e');
+      rethrow;
+    }
+  }
+
+  /// Get complete user data
+  Future<Map<String, dynamic>?> getUser() async {
+    try {
+      final String? encoded = _prefs.getString('user_data');
+      if (encoded != null && encoded.isNotEmpty) {
+        return jsonDecode(encoded) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      print('✗ Error getting user data: $e');
+      return null;
+    }
+  }
+
+  /// Clear user data (logout)
+  Future<void> clearUser() async {
+    try {
+      await _prefs.remove('user_data');
+      await removeToken();
+      print('✓ User data cleared');
+    } catch (e) {
+      print('✗ Error clearing user data: $e');
+      rethrow;
+    }
+  }
+
+
+
 }
+
+
+
+
