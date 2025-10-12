@@ -19,5 +19,10 @@ class AppColors {
   static Color getColor(String colorName) {
     return colorMap[colorName.toLowerCase()] ?? Colors.grey;
   }
+  // Add your primary color as a static constant
+  static const Color primary = Color(0xFFE00289);
+  static const Color secondary = Color(0xFF22abe5);
+
+
 
 }
