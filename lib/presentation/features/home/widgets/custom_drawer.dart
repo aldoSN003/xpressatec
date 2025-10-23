@@ -9,7 +9,7 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     // Usa Get.find con una verificación de seguridad
     final AuthController authController = Get.find<AuthController>();
-    
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -100,12 +100,19 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Acerca de'),
             onTap: () => Get.toNamed('/about'),
           ),
+          ListTile(
+            leading: const Icon(Icons.mic, color: Colors.orange),
+            title: const Text('Generador de Audios'),
+            subtitle: const Text('Generar y subir audios a Firebase', style: TextStyle(fontSize: 12)),
+            onTap: () => Get.toNamed('/audio-testing'),
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
             onTap: () => authController.logout(),
           ),
+
         ],
       ),
     );

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "321005862469",
+    "project_id": "xpressatec-8bcd1",
+    "storage_bucket": "xpressatec-8bcd1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321005862469:android:ae4e7c2bf4fda191726d2c",
+        "android_client_info": {
+          "package_name": "com.example.xpressatec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321005862469-rvhfjovfdk4s42fmp622ns8dp84p9k1a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.xpressatec",
+            "certificate_hash": "0e3ff64fdb904571f9e989c543ab7a97b4c6653d"
+          }
+        },
+        {
+          "client_id": "321005862469-0jmbkh5hup6bvjrgjvcvvnqog3si8uge.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_DUIVN20bjR9eYpwlp7m2WVfzEioSPt4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321005862469-0jmbkh5hup6bvjrgjvcvvnqog3si8uge.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "321005862469-gg45smf7kfhb7g9seug1bpmhiabj0i9e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.xpressatec"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

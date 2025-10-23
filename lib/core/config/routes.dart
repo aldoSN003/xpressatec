@@ -10,6 +10,7 @@ import 'package:xpressatec/presentation/features/settings/screens/about_screen.d
 import 'package:xpressatec/presentation/features/settings/screens/settings_screen.dart';
 import 'package:xpressatec/presentation/features/splash/screens/splash_screen.dart';
 
+import '../../presentation/features/audio_testing/audio_testing_screen.dart';
 import '../../presentation/features/auth/screens/register_screen.dart';
 import '../../presentation/features/profile/screens/link_therapist_screen.dart';
 
@@ -22,6 +23,7 @@ class Routes {
   static const String linkTherapist = '/link-therapist';
   static const String settings = '/settings';
   static const String about = '/about';
+  static const String audioTesting = '/audio-testing';
 }
 
 class AppRoutes {
@@ -56,6 +58,11 @@ class AppRoutes {
     GetPage(
       name: Routes.about,
       page: () => const AboutScreen(),
+    ),
+
+    GetPage(
+      name: Routes.audioTesting,
+      page: () => const AudioTestingScreen(),
     ),
   ];
 }

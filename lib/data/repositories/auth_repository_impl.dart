@@ -1,15 +1,17 @@
+
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/local/local_storage.dart';
-import '../datasources/remote/auth_remote_datasource.dart';
+import '../datasources/remote/firebase_auth_datasource.dart';
 import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDatasource remoteDatasource;
+  final FirebaseAuthDatasource firebaseAuthDatasource;
   final LocalStorage localStorage;
 
   AuthRepositoryImpl({
-    required this.remoteDatasource,
+    required this.firebaseAuthDatasource,
     required this.localStorage,
   });
 
@@ -19,16 +21,15 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      // Call remote API
-      final userModel = await remoteDatasource.login(
+      // Sign in with Firebase
+      final userModel = await firebaseAuthDatasource.signInWithEmail(
         email: email,
         password: password,
       );
 
-      // Save user to local storage
+      // Save to local storage for offline access
       await localStorage.saveUser(userModel.toJson());
 
-      // Return as domain entity
       return userModel.toEntity();
     } catch (e) {
       rethrow;
@@ -45,20 +46,19 @@ class AuthRepositoryImpl implements AuthRepository {
     String? cedula,
   }) async {
     try {
-      // Call remote API
-      final userModel = await remoteDatasource.register(
-        nombre: nombre,
+      // Create account in Firebase
+      final userModel = await firebaseAuthDatasource.signUpWithEmail(
         email: email,
         password: password,
+        nombre: nombre,
         rol: rol,
         fechaNacimiento: fechaNacimiento,
         cedula: cedula,
       );
 
-      // Save user to local storage
+      // Save to local storage
       await localStorage.saveUser(userModel.toJson());
 
-      // Return as domain entity
       return userModel.toEntity();
     } catch (e) {
       rethrow;
@@ -68,7 +68,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     try {
-      await localStorage.clearUser();
+      await Future.wait([
+        firebaseAuthDatasource.signOut(),
+        localStorage.clearUser(),
+      ]);
     } catch (e) {
       rethrow;
     }
@@ -77,11 +80,20 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<User?> getCurrentUser() async {
     try {
+      // Try to get from Firebase first
+      final userModel = await firebaseAuthDatasource.getCurrentUser();
+      if (userModel != null) {
+        // Update local storage
+        await localStorage.saveUser(userModel.toJson());
+        return userModel.toEntity();
+      }
+
+      // Fallback to local storage if offline
       final userData = await localStorage.getUser();
       if (userData == null) return null;
 
-      final userModel = UserModel.fromJson(userData);
-      return userModel.toEntity();
+      final localUserModel = UserModel.fromJson(userData);
+      return localUserModel.toEntity();
     } catch (e) {
       return null;
     }

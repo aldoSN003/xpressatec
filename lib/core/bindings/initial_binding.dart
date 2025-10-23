@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../../data/datasources/local/local_storage.dart';
-import '../../data/datasources/remote/auth_remote_datasource.dart';
+import '../../data/datasources/remote/firebase_auth_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/auth/get_current_user_usecase.dart';
@@ -8,29 +8,29 @@ import '../../domain/usecases/auth/login_usecase.dart';
 import '../../domain/usecases/auth/logout_usecase.dart';
 import '../../domain/usecases/auth/register_usecase.dart';
 import '../../presentation/features/auth/controllers/auth_controller.dart';
-import '../network/api_client.dart';
 
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
     // Core dependencies - available globally
-    Get.put<ApiClient>(ApiClient(), permanent: true);
     Get.put<LocalStorage>(LocalStorage(), permanent: true);
 
-    // Auth dependencies - available globally
-    Get.put<AuthRemoteDatasource>(
-      AuthRemoteDatasourceImpl(apiClient: Get.find<ApiClient>()),
+    // Firebase Auth datasource
+    Get.put<FirebaseAuthDatasource>(
+      FirebaseAuthDatasourceImpl(),
       permanent: true,
     );
 
+    // Auth Repository
     Get.put<AuthRepository>(
       AuthRepositoryImpl(
-        remoteDatasource: Get.find<AuthRemoteDatasource>(),
+        firebaseAuthDatasource: Get.find<FirebaseAuthDatasource>(),
         localStorage: Get.find<LocalStorage>(),
       ),
       permanent: true,
     );
 
+    // Auth Use Cases
     Get.put<LoginUseCase>(
       LoginUseCase(repository: Get.find<AuthRepository>()),
       permanent: true,
@@ -46,9 +46,8 @@ class InitialBinding extends Bindings {
       permanent: true,
     );
 
-    // ADD THIS - Register GetCurrentUserUseCase BEFORE AuthController
     Get.put<GetCurrentUserUseCase>(
-      GetCurrentUserUseCase(Get.find<AuthRepository>()),
+      GetCurrentUserUseCase(repository: Get.find<AuthRepository>()),
       permanent: true,
     );
 
@@ -58,7 +57,7 @@ class InitialBinding extends Bindings {
         loginUseCase: Get.find<LoginUseCase>(),
         registerUseCase: Get.find<RegisterUseCase>(),
         logoutUseCase: Get.find<LogoutUseCase>(),
-        getCurrentUserUseCase: Get.find<GetCurrentUserUseCase>(), // Now this will work!
+        getCurrentUserUseCase: Get.find<GetCurrentUserUseCase>(),
       ),
       permanent: true,
     );
