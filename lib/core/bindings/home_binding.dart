@@ -8,6 +8,7 @@ import 'package:xpressatec/presentation/features/profile/controllers/profile_con
 import 'package:xpressatec/presentation/features/statistics/controllers/statistics_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/controllers/teacch_controller.dart';
 
+import '../../domain/usecases/phrase/get_user_phrases_usecase.dart';
 import '../../presentation/features/auth/controllers/auth_controller.dart';
 import '../../presentation/features/teacch_board/controllers/llm_controller.dart';
 import '../../presentation/features/teacch_board/controllers/tts_controller.dart';
@@ -23,7 +24,12 @@ class HomeBinding extends Bindings {
     Get.lazyPut(() => TeacchController(Get.find()));
     Get.lazyPut(() => ChatController());
     Get.lazyPut(() => CustomizationController());
-    Get.lazyPut(() => StatisticsController());
+    // 🆕 Statistics Controller (with dependency injection)
+    Get.lazyPut<StatisticsController>(
+          () => StatisticsController(
+        getUserPhrasesUseCase: Get.find<GetUserPhrasesUseCase>(),
+      ),
+    );
     Get.lazyPut(() => ProfileController());
     Get.lazyPut<TtsController>(() => TtsController());
     Get.lazyPut(() => LlmController());

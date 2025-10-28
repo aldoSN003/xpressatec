@@ -16,13 +16,17 @@ import '../../domain/usecases/phrase/save_phrase_usecase.dart'; // 🆕 ADD
 import '../../domain/usecases/phrase/get_user_phrases_usecase.dart'; // 🆕 ADD
 import '../../presentation/features/auth/controllers/auth_controller.dart';
 import '../../presentation/features/package_download/controllers/audio_package_controller.dart';
+import '../utils/category_mapper.dart';
 
 class InitialBinding extends Bindings {
   @override
-  void dependencies() {
+  Future<void> dependencies() async {
     // Core dependencies - available globally
     Get.put<LocalStorage>(LocalStorage(), permanent: true);
-
+    // 🆕 Initialize CategoryMapper
+    final categoryMapper = CategoryMapper();
+    await categoryMapper.initialize();
+    print('✅ CategoryMapper ready');
     // Firebase Auth datasource
     Get.put<FirebaseAuthDatasource>(
       FirebaseAuthDatasourceImpl(),
