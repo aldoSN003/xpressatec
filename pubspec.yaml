@@ -17,6 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
   
+  flutter_chat_ui: ^2.9.1
   flutter_dotenv: ^6.0.0
   flutter_svg: ^2.2.1
   get: ^4.7.2
