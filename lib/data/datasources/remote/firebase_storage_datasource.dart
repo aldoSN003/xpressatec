@@ -15,6 +15,18 @@ abstract class FirebaseStorageDatasource {
     required String assistant,
     required String localPath,
   });
+  Future<String> uploadGeneratedAudio({
+    required File audioFile,
+    required String userId,
+    required String phraseId,
+  });
+
+  /// List all audio files for a specific assistant
+  Future<List<String>> listAllAudios(String assistant);
+
+  /// List all available assistant folders
+  Future<List<String>> listAssistants();
+
 
   /// Check if audio exists in Firebase Storage
   Future<bool> audioExists({
@@ -122,6 +134,74 @@ class FirebaseStorageDatasourceImpl implements FirebaseStorageDatasource {
       if (e.code == 'object-not-found') {
         return false;
       }
+      rethrow;
+    }
+  }
+
+
+
+
+  @override
+  Future<List<String>> listAllAudios(String assistant) async {
+    try {
+      final ref = _storage.ref().child('audios/shared/$assistant');
+      final ListResult result = await ref.listAll();
+
+      // Extract file names without .mp3 extension
+      final List<String> words = result.items
+          .map((item) => item.name.replaceAll('.mp3', ''))
+          .toList();
+
+      print('📋 Found ${words.length} audio files for $assistant');
+      return words;
+    } catch (e) {
+      print('❌ Error listing audios for $assistant: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<String>> listAssistants() async {
+    try {
+      final ref = _storage.ref().child('audios/shared');
+      final ListResult result = await ref.listAll();
+
+      // Get folder names (assistant names)
+      final List<String> assistants = result.prefixes
+          .map((prefix) => prefix.name)
+          .toList();
+
+      print('📋 Available assistants: $assistants');
+      return assistants;
+    } catch (e) {
+      print('❌ Error listing assistants: $e');
+      return [];
+    }
+  }
+  @override
+  Future<String> uploadGeneratedAudio({
+    required File audioFile,
+    required String userId,
+    required String phraseId,
+  }) async {
+    try {
+      // Path: generated_audios/{userId}/{phraseId}.mp3
+      final path = 'generated_audios/$userId/$phraseId.mp3';
+
+      print('📤 Uploading generated audio to Firebase: $path');
+
+      final ref = _storage.ref().child(path);
+
+      // Upload file
+      await ref.putFile(audioFile);
+
+      // Get download URL
+      final downloadUrl = await ref.getDownloadURL();
+
+      print('✅ Generated audio uploaded: $downloadUrl');
+      return downloadUrl;
+    } catch (e) {
+      print('❌ Error uploading generated audio: $e');
       rethrow;
     }
   }

@@ -38,7 +38,6 @@ class TeacchController extends GetxController {
 
 
 
-// Add this method to TeacchController
   Future<void> generateAndShowPhrase() async {
     if (selectedItems.isEmpty) {
       Get.snackbar(
@@ -62,21 +61,32 @@ class TeacchController extends GetxController {
     final phrase = await llmController.generatePhrase(words);
 
     if (phrase != null) {
-      // Play the generated phrase using TTS
-      await ttsController.tellPhraseWithPreview(phrase);
+      // Play the generated phrase using TTS and GET THE AUDIO FILE PATH
+      final String? audioFilePath = await ttsController.tellPhrase11labs(phrase);
 
-      // Show dialog with retry, replay, and save options
-      Get.dialog(
-        PhraseResultDialog(
-          phrase: phrase,
-          words: words,
-          onSuccess: () {
-            // Clear selected items after successful save
-            clearSelectedItems();
-          },
-        ),
-        barrierDismissible: false,
-      );
+      if (audioFilePath != null) {
+        // Show dialog with the audio file path
+        Get.dialog(
+          PhraseResultDialog(
+            phrase: phrase,
+            words: words,
+            audioFilePath: audioFilePath, // 🆕 ADD THIS LINE
+            onSuccess: () {
+              // Clear selected items after successful save
+              clearSelectedItems();
+            },
+          ),
+          barrierDismissible: false,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'No se pudo generar el audio',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     } else {
       Get.snackbar(
         'Error',

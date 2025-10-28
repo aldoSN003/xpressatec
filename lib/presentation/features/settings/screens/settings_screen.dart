@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../../core/config/routes.dart';
 
 
 class SettingsScreen extends StatelessWidget {
@@ -33,6 +36,17 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.help),
             title: const Text('Ayuda'),
+          ),
+
+          // Add this widget in your SettingsScreen build method:
+
+          ListTile(
+            leading: const Icon(Icons.download),
+            title: const Text('Descargar Paquetes de Audio'),
+            subtitle: const Text('Gestionar voces de asistentes'),
+            onTap: () {
+              Get.toNamed(Routes.packageDownload);
+            },
           ),
         ],
       ),

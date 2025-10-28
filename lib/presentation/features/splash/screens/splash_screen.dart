@@ -1,9 +1,9 @@
-// presentation/features/splash/screens/splash_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
+import 'package:xpressatec/data/datasources/local/audio_package_manager.dart';
+import 'package:xpressatec/core/config/routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,20 +20,47 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
 
-    // MODIFIED: Set a duration for the one-time zoom animation.
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 3000), // A slightly faster duration feels good
+      duration: const Duration(milliseconds: 3000),
       vsync: this,
-    )..forward(); // MODIFIED: Play the animation forward ONCE instead of repeating.
+    )..forward();
 
-    // MODIFIED: Define the animation range from 0 to a large scale factor.
     _animation = Tween<double>(begin: 0.0, end: 25.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
 
-    // This logic remains the same and runs while the animation plays.
-    final authController = Get.find<AuthController>();
-    authController.checkAutoLogin();
+    // 🆕 Check package first, then auth
+    _checkPackageAndAuth();
+  }
+
+  /// Check if audio package is downloaded, then check auth
+  Future<void> _checkPackageAndAuth() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    try {
+      // Get package manager
+      final packageManager = Get.find<AudioPackageManager>();
+
+      // Check if package is downloaded
+      final bool isPackageDownloaded = await packageManager.isPackageDownloaded();
+
+      if (!isPackageDownloaded) {
+        // No package downloaded - go to download screen
+        print('📦 No audio package found, navigating to download screen');
+        Get.offAllNamed(Routes.packageDownload);
+        return;
+      }
+
+      // Package exists - proceed with normal auth check
+      print('✅ Audio package found, checking authentication');
+      final authController = Get.find<AuthController>();
+      authController.checkAutoLogin();
+
+    } catch (e) {
+      print('❌ Error checking package: $e');
+      // On error, go to login anyway
+      Get.offAllNamed(Routes.login);
+    }
   }
 
   @override
@@ -55,9 +82,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               child: child,
             );
           },
-          // The initial size is set here, the animation will scale it up from this.
           child: SvgPicture.asset(
-            'assets/images/splash.svg', // Ensure this is the correct path to your logo
+            'assets/images/splash.svg',
             width: 150,
           ),
         ),

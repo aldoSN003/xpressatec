@@ -3,18 +3,36 @@ import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/teacch_board/controllers/llm_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/controllers/tts_controller.dart';
 import 'package:xpressatec/data/datasources/local/local_storage.dart';
+import 'package:xpressatec/domain/usecases/phrase/save_phrase_usecase.dart'; // 🆕 ADD
+import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart'; // 🆕 ADD
 
-class PhraseResultDialog extends StatelessWidget {
+class PhraseResultDialog extends StatefulWidget { // 🔧 CHANGED to StatefulWidget
   final String phrase;
   final List<String> words;
+  final String audioFilePath; // 🆕 ADD
   final VoidCallback onSuccess;
 
   const PhraseResultDialog({
     Key? key,
     required this.phrase,
     required this.words,
+    required this.audioFilePath, // 🆕 ADD
     required this.onSuccess,
   }) : super(key: key);
+
+  @override
+  State<PhraseResultDialog> createState() => _PhraseResultDialogState();
+}
+
+class _PhraseResultDialogState extends State<PhraseResultDialog> {
+  bool _isSaving = false; // 🆕 ADD - Track save state
+  String _currentAudioPath = ''; // 🆕 ADD - Track current audio path
+
+  @override
+  void initState() {
+    super.initState();
+    _currentAudioPath = widget.audioFilePath; // 🆕 ADD - Initialize with passed path
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +88,18 @@ class PhraseResultDialog extends StatelessWidget {
                   icon: Icons.refresh,
                   label: 'Reintentar',
                   color: Colors.orange,
-                  onPressed: () async {
-                    final newPhrase = await llmController.generatePhrase(words);
+                  onPressed: _isSaving ? null : () async { // 🔧 DISABLE when saving
+                    final newPhrase = await llmController.generatePhrase(widget.words);
                     if (newPhrase != null) {
-                      // Automatically play the new phrase
-                      await ttsController.tellPhraseWithPreview(newPhrase);
+                      // Generate and play the new phrase
+                      final newAudioPath = await ttsController.tellPhrase11labs(newPhrase);
+
+                      // 🆕 UPDATE current audio path
+                      if (newAudioPath != null) {
+                        setState(() {
+                          _currentAudioPath = newAudioPath;
+                        });
+                      }
                     } else {
                       Get.snackbar(
                         'Error',
@@ -90,41 +115,19 @@ class PhraseResultDialog extends StatelessWidget {
                   icon: Icons.volume_up,
                   label: 'Repetir',
                   color: Colors.blue,
-                  onPressed: () async {
-                    await ttsController.tellPhraseWithPreview(
+                  onPressed: _isSaving ? null : () async { // 🔧 DISABLE when saving
+                    await ttsController.tellPhrase11labs(
                       llmController.generatedPhrase.value,
                     );
                   },
                 ),
 
-                // Save/Check Button
+                // Save Button
                 _buildActionButton(
-                  icon: Icons.check,
-                  label: 'Guardar',
+                  icon: _isSaving ? Icons.hourglass_empty : Icons.check, // 🔧 CHANGE icon when saving
+                  label: _isSaving ? 'Guardando...' : 'Guardar', // 🔧 CHANGE label when saving
                   color: Colors.green,
-                  onPressed: () async {
-                    // Save phrase to local storage
-                    await _savePhrase(
-                      localStorage,
-                      llmController.generatedPhrase.value,
-                      words,
-                    );
-
-                    // Close dialog
-                    Get.back();
-
-                    // Show success message
-                    Get.snackbar(
-                      'Éxito',
-                      'Frase guardada correctamente',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
-                    );
-
-                    // Call success callback
-                    onSuccess();
-                  },
+                  onPressed: _isSaving ? null : () => _savePhraseToFirebase(), // 🔧 NEW METHOD
                 ),
               ],
             ),
@@ -139,7 +142,7 @@ class PhraseResultDialog extends StatelessWidget {
     required IconData icon,
     required String label,
     required Color color,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed, // 🔧 CHANGED to nullable
   }) {
     return Column(
       children: [
@@ -164,7 +167,82 @@ class PhraseResultDialog extends StatelessWidget {
     );
   }
 
-  Future<void> _savePhrase(
+  // 🆕 NEW METHOD - Save to Firebase (Firestore + Storage)
+  Future<void> _savePhraseToFirebase() async {
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      // Get dependencies
+      final authController = Get.find<AuthController>();
+      final ttsController = Get.find<TtsController>();
+      final savePhraseUseCase = Get.find<SavePhraseUseCase>();
+      final llmController = Get.find<LlmController>();
+      final localStorage = Get.find<LocalStorage>();
+
+      // Get userId
+      final userId = authController.currentUser.value?.uuid;
+      if (userId == null || userId.isEmpty) {
+        throw Exception('Usuario no autenticado');
+      }
+
+      // Save phrase to Firebase (Firestore + Storage)
+      await savePhraseUseCase(
+        userId: userId,
+        phrase: llmController.generatedPhrase.value,
+        words: widget.words,
+        assistant: ttsController.selectedAssistant.value,
+        localAudioPath: _currentAudioPath, // Use current audio path (updated on retry)
+      );
+
+      // Also save to local storage as backup
+      await _savePhraseLocally(
+        localStorage,
+        llmController.generatedPhrase.value,
+        widget.words,
+      );
+
+      if (!mounted) return;
+
+      // Close dialog
+      Get.back();
+
+      // Show success message
+      Get.snackbar(
+        '✅ Guardado',
+        'Frase guardada en la nube correctamente',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+
+      // Call success callback
+      widget.onSuccess();
+    } catch (e) {
+      print('❌ Error saving phrase to Firebase: $e');
+
+      if (!mounted) return;
+
+      Get.snackbar(
+        '❌ Error',
+        'No se pudo guardar la frase: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  // 🔧 RENAMED - Keep local storage as backup
+  Future<void> _savePhraseLocally(
       LocalStorage localStorage,
       String phrase,
       List<String> words,
@@ -172,7 +250,7 @@ class PhraseResultDialog extends StatelessWidget {
     try {
       // Get existing phrases
       List<Map<String, dynamic>> savedPhrases =
-          await localStorage.getSavedPhrases() ?? [];
+      await localStorage.getSavedPhrases();
 
       // Add new phrase
       savedPhrases.add({
@@ -184,9 +262,9 @@ class PhraseResultDialog extends StatelessWidget {
       // Save back to storage
       await localStorage.savePhrases(savedPhrases);
 
-      print('✓ Frase guardada: $phrase');
+      print('✓ Frase guardada localmente: $phrase');
     } catch (e) {
-      print('✗ Error al guardar frase: $e');
+      print('✗ Error al guardar frase localmente: $e');
     }
   }
 }

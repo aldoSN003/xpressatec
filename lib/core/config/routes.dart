@@ -12,18 +12,20 @@ import 'package:xpressatec/presentation/features/splash/screens/splash_screen.da
 
 import '../../presentation/features/audio_testing/audio_testing_screen.dart';
 import '../../presentation/features/auth/screens/register_screen.dart';
+import '../../presentation/features/package_download/screens/package_download_screen.dart';
 import '../../presentation/features/profile/screens/link_therapist_screen.dart';
 
 // Route constants
 class Routes {
   static const String splash = '/';
+  static const String packageDownload = '/package-download';
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
   static const String linkTherapist = '/link-therapist';
   static const String settings = '/settings';
   static const String about = '/about';
-  static const String audioTesting = '/audio-testing';
+ // static const String audioTesting = '/audio-testing';
 }
 
 class AppRoutes {
@@ -31,6 +33,10 @@ class AppRoutes {
     GetPage(
       name: Routes.splash,
       page: () => const SplashScreen(),
+    ),
+    GetPage(
+      name: Routes.packageDownload, // 🆕 ADD THIS
+      page: () => const PackageDownloadScreen(),
     ),
     GetPage(
       name: Routes.login,
@@ -60,9 +66,9 @@ class AppRoutes {
       page: () => const AboutScreen(),
     ),
 
-    GetPage(
-      name: Routes.audioTesting,
-      page: () => const AudioTestingScreen(),
-    ),
+    // GetPage(
+    //   name: Routes.audioTesting,
+    //   page: () => const AudioTestingScreen(),
+    // ),
   ];
 }

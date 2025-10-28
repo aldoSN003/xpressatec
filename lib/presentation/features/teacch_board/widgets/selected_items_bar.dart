@@ -44,7 +44,7 @@ class SelectedItemsBar extends StatelessWidget {
                           borderThickness: 4,
                           onTap: () {
                             print('Selected item:${item.text}' );
-                      ttsController.tellPhraseWithPreview(item.text);
+                      ttsController.tellPhrase11labs(item.text);
                           },
                         ),
 
