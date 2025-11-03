@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:xpressatec/data/models/image_model.dart';
 import 'package:xpressatec/presentation/features/teacch_board/widgets/teacch_card_widget.dart';
 import '../controllers/teacch_controller.dart';
-import '../controllers/tts_controller.dart';
+
 
 class SubcategorySelector extends StatelessWidget {
   // Necesitamos el color de la categoría para pasárselo a las tarjetas.

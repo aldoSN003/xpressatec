@@ -38,7 +38,7 @@ class _PhraseResultDialogState extends State<PhraseResultDialog> {
   Widget build(BuildContext context) {
     final llmController = Get.find<LlmController>();
     final ttsController = Get.find<TtsController>();
-    final localStorage = Get.find<LocalStorage>();
+
 
     return Dialog(
       shape: RoundedRectangleBorder(

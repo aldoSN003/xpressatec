@@ -23,7 +23,7 @@ class CategoryMapper {
       final colorFolder = parts.last;
       names[colorFolder] = category.name;
     }
-
+//print (names);
     return names;
   }
 
@@ -62,7 +62,7 @@ class CategoryMapper {
           final fileName = path.split('/').last.replaceAll('.png', '').toLowerCase();
 
           // Skip "portada" files
-          if (fileName == 'portada') continue;
+          //if (fileName == 'portada') continue;
 
           // Map word to category
           _wordToCategoryCache![fileName] = categoryName;
