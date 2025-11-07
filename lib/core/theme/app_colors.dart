@@ -22,7 +22,7 @@ class AppColors {
 
   static const Color primary = Color(0xFFE00289);
   static const Color secondary = Color(0xFF22abe5);
-
+  static const Color disabled = Color(0xFF5C5C5C);
 
 
 }

@@ -6,6 +6,7 @@ class AppFonts {
 
   /// The primary font family for the application.
   static const String primary = 'Cocogoose';
+  static const String thin = 'Cocogoose-thin';
 
 
 }
