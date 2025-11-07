@@ -6,10 +6,10 @@ import 'package:xpressatec/data/models/image_model.dart';
 import 'package:xpressatec/domain/repositories/teacch_repository.dart';
 import 'package:xpressatec/presentation/features/teacch_board/controllers/tts_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/controllers/llm_controller.dart';
-import 'package:xpressatec/presentation/features/teacch_board/controllers/tts_controller.dart';
+
 import 'package:xpressatec/presentation/features/teacch_board/widgets/phrase_result_dialog.dart';
 
-import 'llm_controller.dart';
+
 
 class TeacchController extends GetxController {
   final TeacchRepository _teacchRepository;
@@ -27,7 +27,7 @@ class TeacchController extends GetxController {
   // ✨ Lista de items seleccionados (carne, chocolate, abuela, etc.)
   final RxList<SelectedItem> selectedItems = <SelectedItem>[].obs;
 
-  // ✨ Color de la categoría actual - SOLO ESTA LÍNEA, BORRA CUALQUIER OTRA
+  // ✨ Color de la categoría actual
   Color? _currentCategoryColor;
 
   // Getters

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:xpressatec/core/constants/app_constants.dart';
-import 'package:xpressatec/data/models/image_model.dart';
+
 import 'package:xpressatec/presentation/features/teacch_board/controllers/teacch_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/widgets/category_detail_sheet.dart';
 import '../controllers/tts_controller.dart';
@@ -31,7 +31,7 @@ class TeacchBoardScreen extends StatelessWidget {
           showLabel: true,
           onTap: () async {
             await controller.loadCategoryDetails(category);
-            ttsController.tellPhrase11labs(category.name);
+           // ttsController.tellPhrase11labs(category.name);
 
             Get.bottomSheet(
               FractionallySizedBox(
