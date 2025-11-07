@@ -12,7 +12,7 @@ class CustomizationScreen extends GetView<CustomizationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      backgroundColor: Colors.white,
       body: FutureBuilder<TreeNode<CategoryData>>(
         future: _loadCategories(),
         builder: (context, snapshot) {
@@ -117,13 +117,6 @@ class CustomizationScreen extends GetView<CustomizationController> {
       screenWidth: screenWidth,
     );
 
-    final iconInnerSize = _getResponsiveValue(
-      mobile: 28.0,
-      tablet: 34.0,
-      desktop: 40.0,
-      screenWidth: screenWidth,
-    );
-
     final fontSize = _getResponsiveValue(
       mobile: 16.0,
       tablet: 18.0,
@@ -141,8 +134,10 @@ class CustomizationScreen extends GetView<CustomizationController> {
     final bool isDir = categoryData.isDirectory;
     final IconData iconToShow = categoryData.icon;
 
+    // --- Custom Rendering: Folder or Image Asset ---
     Widget iconWidget;
     if (isDir) {
+      // Folder (directory) nodes
       iconWidget = Container(
         width: iconSize,
         height: iconSize,
@@ -160,23 +155,38 @@ class CustomizationScreen extends GetView<CustomizationController> {
         child: Icon(
           iconToShow,
           color: Colors.white,
-          size: iconInnerSize,
+          size: iconSize * 0.55,
         ),
       );
     } else {
-      iconWidget = Container(
-        width: iconSize,
-        height: iconSize,
-        alignment: Alignment.center,
-        child: Icon(
-          iconToShow,
-          color: color,
-          size: iconInnerSize,
+      // File (image asset) nodes
+      iconWidget = ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.asset(
+          categoryData.path, // ✅ this already points to a valid asset
+          width: iconSize,
+          height: iconSize,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Container(
+            width: iconSize,
+            height: iconSize,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.broken_image_outlined,
+              color: Colors.grey,
+              size: iconSize * 0.5,
+            ),
+          ),
         ),
       );
     }
 
     return Card(
+      color:Colors.white,
       margin: cardMargin,
       elevation: isDir ? 2 : 0.5,
       shape: RoundedRectangleBorder(

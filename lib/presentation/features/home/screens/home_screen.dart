@@ -17,6 +17,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Obx(() {
           switch (navController.currentIndex.value) {
             case 0: return const Text('Tablero TEACCH');

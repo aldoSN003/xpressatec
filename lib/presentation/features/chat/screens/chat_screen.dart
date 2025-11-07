@@ -38,7 +38,9 @@ class _ChatScreenState extends State<ChatScreen> {
     final controller = Get.find<ChatController>();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Obx(() => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

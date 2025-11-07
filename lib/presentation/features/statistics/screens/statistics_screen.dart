@@ -16,8 +16,9 @@ class StatisticsScreen extends StatelessWidget {
     final controller = Get.find<StatisticsController>();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Estadísticas'),
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

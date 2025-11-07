@@ -11,6 +11,7 @@ class CustomDrawer extends StatelessWidget {
     final AuthController authController = Get.find<AuthController>();
 
     return Drawer(
+      backgroundColor: Colors.white,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [

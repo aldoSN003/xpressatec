@@ -47,6 +47,7 @@ class TeacchBoardScreen extends StatelessWidget {
     );
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // ✨ Scrollable selected items bar (only visible when items are selected)
