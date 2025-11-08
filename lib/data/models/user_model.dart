@@ -17,35 +17,73 @@ class UserModel extends User {
 
   // Create from JSON (Firestore format)
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    int _parseId(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is String) {
+        return int.tryParse(value) ?? value.hashCode;
+      }
+      return 0;
+    }
+
+    DateTime? _parseDate(dynamic value) {
+      if (value is DateTime) return value;
+      if (value is String && value.isNotEmpty) {
+        return DateTime.tryParse(value);
+      }
+      return null;
+    }
+
+    final idValue = json['id'] ?? json['idPersona'] ?? json['id_persona'] ?? json['uid'];
+
+    final uuidValue = json['uuid'] ?? json['UUID'] ?? json['uid'] ?? '';
+    final nombreValue = json['nombre'] ?? json['Nombre'] ?? '';
+    final emailValue =
+        json['email'] ?? json['Email'] ?? json['correo'] ?? json['Correo'] ?? '';
+    final rolValue = json['rol'] ?? json['Rol'] ?? '';
+    final fechaCreacionValue = json['fechaCreacion'] ??
+        json['FechaCreacion'] ??
+        json['fecha_creacion'] ??
+        json['Fecha_creacion'];
+    final fechaNacimientoValue =
+        json['fechaNacimiento'] ?? json['fecha_nacimiento'];
+
     return UserModel(
-      id: json['id'] ?? json['uid']?.hashCode ?? 0,
-      uuid: json['uuid'] ?? json['uid'] ?? '',
-      nombre: json['nombre'] ?? json['Nombre'] ?? '',
-      email: json['email'] ?? json['Email'] ?? '',
-      rol: json['rol'] ?? json['Rol'] ?? '',
-      fechaCreacion: json['fechaCreacion'] != null
-          ? DateTime.parse(json['fechaCreacion'])
-          : (json['FechaCreacion'] != null
-          ? DateTime.parse(json['FechaCreacion'])
-          : null),
-      fechaNacimiento: json['fechaNacimiento'],
-      cedula: json['cedula'],
+      id: _parseId(idValue),
+      uuid: uuidValue.toString(),
+      nombre: nombreValue.toString(),
+      email: emailValue.toString(),
+      rol: rolValue.toString(),
+      fechaCreacion: _parseDate(fechaCreacionValue),
+      fechaNacimiento:
+          fechaNacimientoValue == null ? null : fechaNacimientoValue.toString(),
+      cedula: json['cedula']?.toString(),
     );
   }
 
   // Convert to JSON (for Firestore and local storage)
   Map<String, dynamic> toJson() {
-    return {
-      'uid': uuid, // Firebase UID
-      'uuid': uuid,
+    final data = <String, dynamic>{
       'id': id,
+      'idPersona': id,
+      'id_persona': id,
+      'uuid': uuid,
+      'UUID': uuid,
+      'uid': uuid,
       'nombre': nombre,
+      'Nombre': nombre,
       'email': email,
+      'correo': email,
       'rol': rol,
+      'Rol': rol,
       'fechaCreacion': fechaCreacion?.toIso8601String(),
       'fechaNacimiento': fechaNacimiento,
+      'fecha_nacimiento': fechaNacimiento,
       'cedula': cedula,
     };
+
+    data.removeWhere((key, value) => value == null);
+    return data;
   }
 
   // Create from entity

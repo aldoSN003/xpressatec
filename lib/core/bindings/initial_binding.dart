@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../../data/datasources/local/local_storage.dart';
-import '../../data/datasources/remote/firebase_auth_datasource.dart';
+import '../../data/datasources/remote/api_auth_datasource.dart';
 import '../../data/datasources/remote/firebase_storage_datasource.dart';
 import '../../data/datasources/remote/firestore_datasource.dart'; // 🆕 ADD
 import '../../data/datasources/local/audio_package_manager.dart';
@@ -28,8 +28,8 @@ class InitialBinding extends Bindings {
     await categoryMapper.initialize();
     print('✅ CategoryMapper ready');
     // Firebase Auth datasource
-    Get.put<FirebaseAuthDatasource>(
-      FirebaseAuthDatasourceImpl(),
+    Get.put<ApiAuthDatasource>(
+      ApiAuthDatasourceImpl(),
       permanent: true,
     );
 
@@ -65,7 +65,7 @@ class InitialBinding extends Bindings {
     // Auth Repository
     Get.put<AuthRepository>(
       AuthRepositoryImpl(
-        firebaseAuthDatasource: Get.find<FirebaseAuthDatasource>(),
+        apiAuthDatasource: Get.find<ApiAuthDatasource>(),
         localStorage: Get.find<LocalStorage>(),
       ),
       permanent: true,
