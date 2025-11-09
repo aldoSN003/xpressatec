@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/local/local_storage.dart';
@@ -88,5 +90,10 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       return false;
     }
+  }
+
+  @override
+  Future<Uint8List> getPatientQr(String uuid) {
+    return apiAuthDatasource.getPatientQr(uuid);
   }
 }

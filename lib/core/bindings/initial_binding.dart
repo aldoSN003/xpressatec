@@ -11,6 +11,7 @@ import '../../data/repositories/phrase_repository_impl.dart'; // 🆕 ADD
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/phrase_repository.dart'; // 🆕 ADD
 import '../../domain/usecases/auth/get_current_user_usecase.dart';
+import '../../domain/usecases/auth/get_patient_qr_usecase.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
 import '../../domain/usecases/auth/logout_usecase.dart';
 import '../../domain/usecases/auth/register_usecase.dart';
@@ -111,6 +112,11 @@ class InitialBinding extends Bindings {
 
     Get.put<GetCurrentUserUseCase>(
       GetCurrentUserUseCase(repository: Get.find<AuthRepository>()),
+      permanent: true,
+    );
+
+    Get.put<GetPatientQrUseCase>(
+      GetPatientQrUseCase(repository: Get.find<AuthRepository>()),
       permanent: true,
     );
 
