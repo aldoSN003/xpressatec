@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/custom_pictogram.dart';
+
 class LocalStorage {
   late SharedPreferences _prefs;
 
@@ -8,6 +10,8 @@ class LocalStorage {
   static final LocalStorage _instance = LocalStorage._internal();
   factory LocalStorage() => _instance;
   LocalStorage._internal();
+
+  static const String _customPictogramsKey = 'custom_pictograms';
 
   /// Initialize SharedPreferences
   Future<void> init() async {
@@ -210,6 +214,33 @@ class LocalStorage {
   /// Check if key exists
   bool containsKey(String key) {
     return _prefs.containsKey(key);
+  }
+
+  // ==================== CUSTOM PICTOGRAMS ====================
+
+  Future<void> saveCustomPictograms(List<CustomPictogram> pictograms) async {
+    try {
+      final encoded = jsonEncode(pictograms.map((p) => p.toMap()).toList());
+      await _prefs.setString(_customPictogramsKey, encoded);
+    } catch (e) {
+      print('✗ Error saving custom pictograms: $e');
+    }
+  }
+
+  Future<List<CustomPictogram>> getCustomPictograms() async {
+    try {
+      final encoded = _prefs.getString(_customPictogramsKey);
+      if (encoded == null || encoded.isEmpty) {
+        return [];
+      }
+      final List<dynamic> decoded = jsonDecode(encoded);
+      return decoded
+          .map((e) => CustomPictogram.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
+    } catch (e) {
+      print('✗ Error loading custom pictograms: $e');
+      return [];
+    }
   }
 
 
