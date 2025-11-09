@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import '../../data/datasources/local/local_asset_storage.dart';
 import '../../data/datasources/local/local_storage.dart';
 import '../../data/datasources/remote/api_auth_datasource.dart';
 import '../../data/datasources/remote/firebase_storage_datasource.dart';
 import '../../data/datasources/remote/firestore_datasource.dart'; // 🆕 ADD
+import '../../data/datasources/remote/media_api_datasource.dart';
 import '../../data/datasources/local/audio_package_manager.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/repositories/phrase_repository_impl.dart'; // 🆕 ADD
@@ -16,6 +18,7 @@ import '../../domain/usecases/phrase/save_phrase_usecase.dart'; // 🆕 ADD
 import '../../domain/usecases/phrase/get_user_phrases_usecase.dart'; // 🆕 ADD
 import '../../presentation/features/auth/controllers/auth_controller.dart';
 import '../../presentation/features/package_download/controllers/audio_package_controller.dart';
+import '../../presentation/features/customization/controllers/customization_controller.dart';
 import '../utils/category_mapper.dart';
 
 class InitialBinding extends Bindings {
@@ -23,6 +26,16 @@ class InitialBinding extends Bindings {
   Future<void> dependencies() async {
     // Core dependencies - available globally
     Get.put<LocalStorage>(LocalStorage(), permanent: true);
+    Get.put<MediaApiDatasource>(MediaApiDatasourceImpl(), permanent: true);
+    Get.put<LocalAssetStorage>(LocalAssetStorage(), permanent: true);
+    Get.put<CustomizationController>(
+      CustomizationController(
+        mediaApiDatasource: Get.find<MediaApiDatasource>(),
+        localAssetStorage: Get.find<LocalAssetStorage>(),
+        localStorage: Get.find<LocalStorage>(),
+      ),
+      permanent: true,
+    );
     // 🆕 Initialize CategoryMapper
     final categoryMapper = CategoryMapper();
     await categoryMapper.initialize();

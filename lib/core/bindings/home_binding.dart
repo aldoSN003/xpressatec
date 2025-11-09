@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:xpressatec/data/repositories/teacch_repository_impl.dart';
 import 'package:xpressatec/domain/repositories/teacch_repository.dart';
 import 'package:xpressatec/presentation/features/chat/controllers/chat_controller.dart';
-import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 import 'package:xpressatec/presentation/features/home/controllers/navigation_controller.dart';
 import 'package:xpressatec/presentation/features/profile/controllers/profile_controller.dart';
 import 'package:xpressatec/presentation/features/statistics/controllers/statistics_controller.dart';
@@ -23,7 +22,6 @@ class HomeBinding extends Bindings {
     Get.lazyPut(() => NavigationController());
     Get.lazyPut(() => TeacchController(Get.find()));
     Get.lazyPut(() => ChatController());
-    Get.lazyPut(() => CustomizationController());
     // 🆕 Statistics Controller (with dependency injection)
     Get.lazyPut<StatisticsController>(
           () => StatisticsController(

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
 import 'package:xpressatec/data/datasources/local/audio_package_manager.dart';
 import 'package:xpressatec/core/config/routes.dart';
+import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,6 +39,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     await Future.delayed(const Duration(seconds: 2));
 
     try {
+      final customizationController = Get.find<CustomizationController>();
+      await customizationController.initCustomization();
+
       // Get package manager
       final packageManager = Get.find<AudioPackageManager>();
 
