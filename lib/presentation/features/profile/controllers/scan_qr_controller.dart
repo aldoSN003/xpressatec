@@ -2,59 +2,40 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanQrController extends GetxController {
-  ScanQrController();
+  final MobileScannerController scannerController = MobileScannerController();
 
-  final MobileScannerController scannerController = MobileScannerController(
-    formats: const [BarcodeFormat.qrCode],
-    detectionSpeed: DetectionSpeed.noDuplicates,
-  );
-
-  final RxnString scannedUuid = RxnString();
-  final RxString statusMessage = 'Apunta la cámara hacia el código QR.'.obs;
+  final RxBool isTorchOn = false.obs;
+  final RxString statusMessage = 'Escanea un código QR para comenzar.'.obs;
   final RxBool hasError = false.obs;
+  final RxnString scannedUuid = RxnString();
 
   void onDetect(BarcodeCapture capture) {
-    if (scannedUuid.value != null) {
+    if (capture.barcodes.isEmpty) return;
+
+    final raw = capture.barcodes.first.rawValue;
+    if (raw == null || raw.isEmpty) {
+      hasError.value = true;
+      statusMessage.value = 'El código escaneado no es válido.';
       return;
     }
 
-    String? value;
-    for (final barcode in capture.barcodes) {
-      final rawValue = barcode.rawValue?.trim();
-      if (rawValue != null && rawValue.isNotEmpty) {
-        value = rawValue;
-        break;
-      }
-    }
-
-    if (value == null) {
-      _setError(
-        'Este código no es válido. Intenta con un código generado en la app del paciente.',
-      );
-      return;
-    }
-
-    scannedUuid.value = value;
+    scannedUuid.value = raw;
     hasError.value = false;
     statusMessage.value = 'QR leído correctamente.';
+    // NO llamamos aún a ningún endpoint.
     scannerController.stop();
   }
 
   Future<void> toggleTorch() async {
     await scannerController.toggleTorch();
+    isTorchOn.value = !isTorchOn.value;
   }
 
-  Future<void> resumeScanning() async {
+  void resumeScanning() {
     scannedUuid.value = null;
     hasError.value = false;
-    statusMessage.value = 'Apunta la cámara hacia el código QR.';
-    await scannerController.start();
-  }
-
-  void _setError(String message) {
-    scannedUuid.value = null;
-    hasError.value = true;
-    statusMessage.value = message;
+    statusMessage.value = 'Escanea un código QR para comenzar.';
+    scannerController.start();
   }
 
   @override

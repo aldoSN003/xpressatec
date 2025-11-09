@@ -13,10 +13,7 @@ class ScanQrScreen extends GetView<ScanQrController> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Escanear QR'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Escanear QR'), centerTitle: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -58,7 +55,10 @@ class ScanQrScreen extends GetView<ScanQrController> {
               Expanded(
                 child: Center(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
                     constraints: const BoxConstraints(maxWidth: 420),
                     child: AspectRatio(
                       aspectRatio: 0.95,
@@ -121,7 +121,10 @@ class ScanQrScreen extends GetView<ScanQrController> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Obx(() {
                   final message = controller.statusMessage.value;
                   final isError = controller.hasError.value;
@@ -131,13 +134,13 @@ class ScanQrScreen extends GetView<ScanQrController> {
                   final Color containerColor = isError
                       ? colorScheme.errorContainer
                       : hasResult
-                          ? colorScheme.primaryContainer
-                          : colorScheme.surface;
+                      ? colorScheme.primaryContainer
+                      : colorScheme.surface;
                   final Color textColor = isError
                       ? colorScheme.onErrorContainer
                       : hasResult
-                          ? colorScheme.onPrimaryContainer
-                          : colorScheme.onSurface;
+                      ? colorScheme.onPrimaryContainer
+                      : colorScheme.onSurface;
 
                   IconData iconData;
                   if (hasResult) {
@@ -151,7 +154,10 @@ class ScanQrScreen extends GetView<ScanQrController> {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 24,
+                    ),
                     decoration: BoxDecoration(
                       color: containerColor,
                       borderRadius: BorderRadius.circular(24),
@@ -212,25 +218,30 @@ class ScanQrScreen extends GetView<ScanQrController> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: ValueListenableBuilder<TorchState?>(
-                        valueListenable: controller.scannerController.torchState,
-                        builder: (context, state, child) {
-                          final isOn = state == TorchState.on;
-                          return FilledButton.icon(
-                            onPressed: controller.toggleTorch,
-                            icon: Icon(isOn ? Icons.flash_off : Icons.flash_on),
-                            label: Text(isOn ? 'Apagar linterna' : 'Encender linterna'),
-                          );
-                        },
-                      ),
+                      child: Obx(() {
+                        final isOn = controller.isTorchOn.value;
+                        return FilledButton.icon(
+                          onPressed: controller.toggleTorch,
+                          icon: Icon(isOn ? Icons.flash_off : Icons.flash_on),
+                          label: Text(
+                            isOn ? 'Apagar linterna' : 'Encender linterna',
+                          ),
+                        );
+                      }),
                     ),
+
                     const SizedBox(width: 12),
                     Expanded(
                       child: Obx(() {
                         final hasResult =
-                            controller.scannedUuid.value != null || controller.hasError.value;
-                        final String label = hasResult ? 'Escanear de nuevo' : 'Cancelar';
-                        final IconData icon = hasResult ? Icons.refresh : Icons.close;
+                            controller.scannedUuid.value != null ||
+                            controller.hasError.value;
+                        final String label = hasResult
+                            ? 'Escanear de nuevo'
+                            : 'Cancelar';
+                        final IconData icon = hasResult
+                            ? Icons.refresh
+                            : Icons.close;
                         return OutlinedButton.icon(
                           onPressed: hasResult
                               ? () {
