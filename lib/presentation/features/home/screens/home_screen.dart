@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/chat/screens/chat_screen.dart';
@@ -15,6 +16,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NavigationController navController = Get.find();
+    final theme = Theme.of(context);
+    final titleColor = theme.appBarTheme.titleTextStyle?.color ??
+        theme.textTheme.titleLarge?.color ??
+        theme.colorScheme.onSurface;
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +27,25 @@ class HomeScreen extends StatelessWidget {
         title: Obx(() {
           switch (navController.currentSection) {
             case NavigationSection.teacch:
-              return const Text('Tablero TEACCH');
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Tablero',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: titleColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SvgPicture.asset(
+                    'assets/images/imagen.svg',
+                    height: 24,
+                    colorFilter: ColorFilter.mode(titleColor, BlendMode.srcIn),
+                    semanticsLabel: 'Icono del tablero TEACCH',
+                  ),
+                ],
+              );
             case NavigationSection.chat:
               return const Text('Chat con Terapeuta');
             case NavigationSection.customization:

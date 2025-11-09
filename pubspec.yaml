@@ -20,6 +20,7 @@ dependencies:
   flutter_chat_ui: ^2.9.1
   flutter_dotenv: ^6.0.0
   flutter_svg: ^2.2.1
+  table_calendar: ^3.0.9
   get: ^4.7.2
   hive_flutter: ^1.1.0
   http: ^1.5.0
