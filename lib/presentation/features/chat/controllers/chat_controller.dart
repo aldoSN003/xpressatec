@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import 'package:xpressatec/core/config/routes.dart';
 import 'package:xpressatec/data/datasources/local/mock_chat_data.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
+import 'package:xpressatec/presentation/features/home/controllers/navigation_controller.dart';
 
 class ChatMessage {
   final String id;
@@ -28,9 +30,36 @@ class ChatController extends GetxController {
   final RxString currentUserName = ''.obs;
   final RxString otherUserName = ''.obs;
 
+  late final AuthController _authController;
+
   @override
   void onInit() {
     super.onInit();
+    _authController = Get.find<AuthController>();
+
+    if (!_authController.canAccessChat) {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar(
+          'Acceso restringido',
+          'El chat no está disponible para tu rol actual.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        if (Get.currentRoute == Routes.home) {
+          if (Get.isRegistered<NavigationController>()) {
+            Get.find<NavigationController>().changePage(0);
+          }
+        } else {
+          if (Get.key.currentState?.canPop() ?? false) {
+            Get.back();
+          } else {
+            Get.offAllNamed(Routes.home);
+          }
+        }
+      });
+      return;
+    }
+
     _initializeChat();
   }
 
@@ -40,8 +69,7 @@ class ChatController extends GetxController {
       isLoading.value = true;
 
       // Get current user from AuthController
-      final authController = Get.find<AuthController>();
-      final user = authController.currentUser.value;
+      final user = _authController.currentUser.value;
 
       if (user == null) {
         print('❌ No user found');

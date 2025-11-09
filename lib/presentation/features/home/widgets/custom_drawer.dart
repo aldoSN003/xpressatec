@@ -46,7 +46,7 @@ class CustomDrawer extends StatelessWidget {
           ),
           // Enlazar con Terapeuta (Destacado) - Solo mostrar para pacientes y tutores
           Obx(() {
-            if (authController.userRole.value.toLowerCase() != 'terapeuta') {
+            if (!authController.isTerapeuta) {
               return Container(
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
