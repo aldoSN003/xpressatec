@@ -1,5 +1,5 @@
 class CustomPictogram {
-  const CustomPictogram({
+  CustomPictogram({
     required this.id,
     required this.name,
     required this.relativePath,
@@ -40,13 +40,17 @@ class CustomPictogram {
   }
 
   factory CustomPictogram.fromMap(Map<String, dynamic> map) {
-    final createdAt = map['createdAt'] as String?;
+    final createdAtString = map['createdAt'] as String?;
+    final parsedCreatedAt = createdAtString != null
+        ? DateTime.tryParse(createdAtString)
+        : null;
+
     return CustomPictogram(
       id: map['id'] as String,
       name: map['name'] as String,
       relativePath: map['relativePath'] as String,
       parentPath: map['parentPath'] as String,
-      createdAt: createdAt != null ? DateTime.tryParse(createdAt) : null,
+      createdAt: parsedCreatedAt,
     );
   }
 }
