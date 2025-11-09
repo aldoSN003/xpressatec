@@ -11,36 +11,53 @@ class CustomDrawer extends StatelessWidget {
     // Usa Get.find con una verificación de seguridad
     final AuthController authController = Get.find<AuthController>();
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Colors.blue,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.primaryContainer,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: Colors.blue),
+                  backgroundColor: colorScheme.onPrimary,
+                  child: Icon(Icons.person, size: 40, color: colorScheme.primary),
                 ),
                 const SizedBox(height: 12),
                 Obx(() => Text(
                   authController.userName.value,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 )),
                 Obx(() => Text(
                   authController.userEmail.value,
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onPrimary.withOpacity(0.8),
+                  ),
                 )),
                 Obx(() => Text(
                   'Rol: ${authController.userRole.value}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onPrimary.withOpacity(0.7),
+                  ),
                 )),
               ],
             ),
@@ -52,12 +69,15 @@ class CustomDrawer extends StatelessWidget {
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.blue.shade400, Colors.blue.shade600],
+                    colors: [
+                      colorScheme.primary,
+                      colorScheme.primaryContainer,
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.3),
+                      color: colorScheme.primary.withOpacity(0.25),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -68,28 +88,80 @@ class CustomDrawer extends StatelessWidget {
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.link, color: Colors.blue),
+                    child: Icon(Icons.link, color: colorScheme.primary),
                   ),
-                  title: const Text(
+                  title: Text(
                     'Enlazar tutor',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  subtitle: const Text(
+                  subtitle: Text(
                     'Comparte tu código QR con tu tutor',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onPrimary.withOpacity(0.8),
+                    ),
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                  trailing: Icon(Icons.arrow_forward_ios, color: colorScheme.onPrimary),
                 ),
               );
             } else {
               return const SizedBox.shrink();
             }
+          }),
+          // Escanear QR - Solo mostrar para tutores
+          Obx(() {
+            if (authController.isTutor) {
+              return Container(
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      colorScheme.primary,
+                      colorScheme.primaryContainer,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  onTap: () => Get.toNamed(Routes.scanQr),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.onPrimary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.qr_code_scanner, color: colorScheme.primary),
+                  ),
+                  title: Text(
+                    'Escanear QR',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Escanea el código del paciente para enlazar',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onPrimary.withOpacity(0.8),
+                    ),
+                  ),
+                  trailing: Icon(Icons.arrow_forward_ios, color: colorScheme.onPrimary),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
           }),
           const Divider(),
           ListTile(
