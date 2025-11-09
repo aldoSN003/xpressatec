@@ -13,6 +13,8 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Prepare Spanish locale data for all date formatting in the app.
   await initializeDateFormatting('es_ES', null);
   Intl.defaultLocale = 'es_ES';
   await dotenv.load(fileName: ".env");
