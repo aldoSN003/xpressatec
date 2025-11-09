@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:xpressatec/core/config/routes.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -44,9 +45,9 @@ class CustomDrawer extends StatelessWidget {
               ],
             ),
           ),
-          // Enlazar con Terapeuta (Destacado) - Solo mostrar para pacientes y tutores
+          // Enlazar tutor (Destacado) - Solo mostrar para pacientes
           Obx(() {
-            if (!authController.isTerapeuta) {
+            if (authController.isPaciente) {
               return Container(
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -63,7 +64,7 @@ class CustomDrawer extends StatelessWidget {
                   ],
                 ),
                 child: ListTile(
-                  onTap: () => Get.toNamed('/link-therapist'),
+                  onTap: () => Get.toNamed(Routes.linkTutor),
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -73,14 +74,14 @@ class CustomDrawer extends StatelessWidget {
                     child: const Icon(Icons.link, color: Colors.blue),
                   ),
                   title: const Text(
-                    'Enlazar con Terapeuta',
+                    'Enlazar tutor',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   subtitle: const Text(
-                    'Conecta con tu especialista',
+                    'Comparte tu código QR con tu tutor',
                     style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),

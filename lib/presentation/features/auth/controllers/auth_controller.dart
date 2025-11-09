@@ -36,6 +36,8 @@ class AuthController extends GetxController {
   RxString get userEmail => (currentUser.value?.email ?? '').obs;
   RxString get userRole => (currentUser.value?.rol ?? '').obs;
 
+  String? get patientUuid => currentUser.value?.uuid;
+
   // Role helpers
   bool get isPaciente => currentUser.value?.isPaciente ?? false;
   bool get isTutor => currentUser.value?.isTutor ?? false;

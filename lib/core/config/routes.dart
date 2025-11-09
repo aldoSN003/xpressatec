@@ -13,7 +13,8 @@ import 'package:xpressatec/presentation/features/splash/screens/splash_screen.da
 import '../../presentation/features/audio_testing/audio_testing_screen.dart';
 import '../../presentation/features/auth/screens/register_screen.dart';
 import '../../presentation/features/package_download/screens/package_download_screen.dart';
-import '../../presentation/features/profile/screens/link_therapist_screen.dart';
+import '../../core/bindings/link_tutor_binding.dart';
+import '../../presentation/features/profile/screens/link_tutor_screen.dart';
 
 // Route constants
 class Routes {
@@ -23,7 +24,7 @@ class Routes {
   static const String register = '/register';
 
   static const String home = '/home';
-  static const String linkTherapist = '/link-therapist';
+  static const String linkTutor = '/link-tutor';
   static const String settings = '/settings';
   static const String about = '/about';
  // static const String audioTesting = '/audio-testing';
@@ -55,8 +56,9 @@ class AppRoutes {
       binding: HomeBinding(),
     ),
     GetPage(
-      name: Routes.linkTherapist,
-      page: () => const LinkTherapistScreen(),
+      name: Routes.linkTutor,
+      page: () => const LinkTutorScreen(),
+      binding: LinkTutorBinding(),
     ),
     GetPage(
       name: Routes.settings,
