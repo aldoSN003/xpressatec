@@ -80,10 +80,12 @@ class TutorCalendarScreen extends GetView<TutorCalendarController> {
               color: colorScheme.primary,
               shape: BoxShape.circle,
             ),
-            selectedTextStyle: theme.textTheme.bodyLarge?.copyWith(
+            selectedTextStyle:
+                (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
               color: colorScheme.onPrimary,
             ),
-            todayTextStyle: theme.textTheme.bodyLarge?.copyWith(
+            todayTextStyle:
+                (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
