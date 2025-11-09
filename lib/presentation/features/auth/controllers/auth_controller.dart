@@ -13,6 +13,11 @@ class AuthController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxString selectedRole = 'Paciente'.obs;
 
+  final RxString userName = 'Usuario'.obs;
+  final RxString userEmail = ''.obs;
+  final RxString userRole = ''.obs;
+  final RxnString userUuid = RxnString();
+
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
   final LogoutUseCase logoutUseCase;
@@ -32,11 +37,9 @@ class AuthController extends GetxController {
   }
 
   // Computed properties for UI
-  RxString get userName => (currentUser.value?.nombre ?? 'Usuario').obs;
-  RxString get userEmail => (currentUser.value?.email ?? '').obs;
-  RxString get userRole => (currentUser.value?.rol ?? '').obs;
+  String? get uuid => userUuid.value ?? currentUser.value?.uuid;
 
-  String? get patientUuid => currentUser.value?.uuid;
+  String? get patientUuid => uuid;
 
   // Role helpers
   bool get isPaciente => currentUser.value?.isPaciente ?? false;
@@ -58,7 +61,7 @@ class AuthController extends GetxController {
         password: password,
       );
 
-      currentUser.value = user;
+      _setCurrentUser(user);
 
       // Navigate based on role
       _navigateByRole(user.rol);
@@ -102,7 +105,7 @@ class AuthController extends GetxController {
         cedula: cedula,
       );
 
-      currentUser.value = user;
+      _setCurrentUser(user);
 
       // Navigate based on role
       _navigateByRole(user.rol);
@@ -128,7 +131,7 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     try {
       await logoutUseCase();
-      currentUser.value = null;
+      _setCurrentUser(null);
       Get.offAllNamed(Routes.login);
       Get.snackbar(
         'Sesión cerrada',
@@ -168,15 +171,23 @@ class AuthController extends GetxController {
     try {
       final user = await getCurrentUserUseCase();
       if (user != null) {
-        currentUser.value = user;
+        _setCurrentUser(user);
         print('✓ User loaded: ${user.nombre}');
+      } else {
+        _setCurrentUser(null);
       }
     } catch (e) {
       print('✗ Error loading user: $e');
     }
   }
 
-
+  void _setCurrentUser(User? user) {
+    currentUser.value = user;
+    userName.value = user?.nombre ?? 'Usuario';
+    userEmail.value = user?.email ?? '';
+    userRole.value = user?.rol ?? '';
+    userUuid.value = user?.uuid;
+  }
 
   Future<void> checkAutoLogin() async {
     // A small delay to let the splash screen be visible
@@ -185,17 +196,19 @@ class AuthController extends GetxController {
     try {
       final user = await getCurrentUserUseCase();
       if (user != null) {
-        currentUser.value = user;
+        _setCurrentUser(user);
         print('✓ Auto-login successful for: ${user.nombre}');
         // Navigate to home since we found a user
         Get.offAllNamed(Routes.home);
       } else {
         // Navigate to login if no user is in cache
+        _setCurrentUser(null);
         Get.offAllNamed(Routes.login);
       }
     } catch (e) {
       print('✗ No cached user found or error loading user: $e');
       // Navigate to login on any error
+      _setCurrentUser(null);
       Get.offAllNamed(Routes.login);
     }
   }

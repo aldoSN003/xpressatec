@@ -18,7 +18,7 @@ class LinkTutorController extends GetxController {
   final Rx<Uint8List?> qrBytes = Rx<Uint8List?>(null);
   final RxString errorMessage = ''.obs;
 
-  String? get patientUuid => authController.currentUser.value?.uuid;
+  String? get patientUuid => authController.uuid;
 
   bool get canLoadQr => authController.isPaciente;
 

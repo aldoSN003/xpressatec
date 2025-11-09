@@ -14,7 +14,9 @@ import '../../presentation/features/audio_testing/audio_testing_screen.dart';
 import '../../presentation/features/auth/screens/register_screen.dart';
 import '../../presentation/features/package_download/screens/package_download_screen.dart';
 import '../../core/bindings/link_tutor_binding.dart';
+import '../../core/bindings/scan_qr_binding.dart';
 import '../../presentation/features/profile/screens/link_tutor_screen.dart';
+import '../../presentation/features/profile/screens/scan_qr_screen.dart';
 
 // Route constants
 class Routes {
@@ -27,6 +29,7 @@ class Routes {
   static const String linkTutor = '/link-tutor';
   static const String settings = '/settings';
   static const String about = '/about';
+  static const String scanQr = '/scan-qr';
  // static const String audioTesting = '/audio-testing';
 }
 
@@ -59,6 +62,11 @@ class AppRoutes {
       name: Routes.linkTutor,
       page: () => const LinkTutorScreen(),
       binding: LinkTutorBinding(),
+    ),
+    GetPage(
+      name: Routes.scanQr,
+      page: () => const ScanQrScreen(),
+      binding: ScanQrBinding(),
     ),
     GetPage(
       name: Routes.settings,
