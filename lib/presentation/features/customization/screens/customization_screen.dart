@@ -162,25 +162,48 @@ class CustomizationScreen extends GetView<CustomizationController> {
       // File (image asset) nodes
       iconWidget = ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.asset(
-          categoryData.path, // ✅ this already points to a valid asset
-          width: iconSize,
-          height: iconSize,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(
-            width: iconSize,
-            height: iconSize,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.broken_image_outlined,
-              color: Colors.grey,
-              size: iconSize * 0.5,
-            ),
-          ),
+        child: FutureBuilder<ImageProvider>(
+          future: controller.getImageProvider(categoryData.path),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                width: iconSize,
+                height: iconSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SizedBox(
+                  width: iconSize * 0.4,
+                  height: iconSize * 0.4,
+                  child: const CircularProgressIndicator(strokeWidth: 2),
+                ),
+              );
+            }
+            if (snapshot.hasError || !snapshot.hasData) {
+              return Container(
+                width: iconSize,
+                height: iconSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.broken_image_outlined,
+                  color: Colors.grey,
+                  size: iconSize * 0.5,
+                ),
+              );
+            }
+            return Image(
+              image: snapshot.data!,
+              width: iconSize,
+              height: iconSize,
+              fit: BoxFit.cover,
+            );
+          },
         ),
       );
     }
@@ -236,20 +259,9 @@ class CustomizationScreen extends GetView<CustomizationController> {
     final categoryData = item.data;
     if (categoryData == null) return;
 
-    print(
-        'Tapped item: ${categoryData.name} (isDir: ${categoryData.isDirectory})');
-    print('Path: ${categoryData.path}');
-
-    // Get.snackbar(
-    //   categoryData.isDirectory ? 'Carpeta' : 'Elemento',
-    //   categoryData.name,
-    //   backgroundColor: AppColors.getColor(categoryData.colorName),
-    //   colorText: Colors.white,
-    //   duration: const Duration(seconds: 2),
-    //   snackPosition: SnackPosition.BOTTOM,
-    //   margin: const EdgeInsets.all(16),
-    //   borderRadius: 12,
-    // );
+    if (!categoryData.isDirectory) {
+      await controller.replaceImage(categoryData.path);
+    }
   }
 
   Future<TreeNode<CategoryData>> _loadCategories() async {
