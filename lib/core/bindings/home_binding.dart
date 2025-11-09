@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:xpressatec/data/datasources/local/local_storage.dart';
 import 'package:xpressatec/data/repositories/teacch_repository_impl.dart';
 import 'package:xpressatec/domain/repositories/teacch_repository.dart';
 import 'package:xpressatec/presentation/features/chat/controllers/chat_controller.dart';
@@ -16,7 +17,9 @@ class HomeBinding extends Bindings {
   @override
   void dependencies() {
     // Repository
-    Get.lazyPut<TeacchRepository>(() => TeacchRepositoryImpl());
+    Get.lazyPut<TeacchRepository>(
+      () => TeacchRepositoryImpl(localStorage: Get.find<LocalStorage>()),
+    );
 
     // Controllers
     Get.lazyPut(() => NavigationController());
