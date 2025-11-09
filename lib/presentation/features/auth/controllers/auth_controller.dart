@@ -7,25 +7,11 @@ import '../../../../domain/usecases/auth/register_usecase.dart';
 import '../../../../core/config/routes.dart';
 
 class AuthController extends GetxController {
-
-
-
-  @override
-  void onInit() {
-    super.onInit();
-    _loadCurrentUser(); // Load user on startup
-  }
-
-
-
-
   // Observable state
   final Rx<User?> currentUser = Rx<User?>(null);
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-  final RxString selectedRole = 'Paciente'.obs;  // ADD THIS LINE
-
-
+  final RxString selectedRole = 'Paciente'.obs;
 
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
@@ -39,12 +25,22 @@ class AuthController extends GetxController {
     required this.getCurrentUserUseCase,
   });
 
-
+  @override
+  void onInit() {
+    super.onInit();
+    _loadCurrentUser(); // Load user on startup
+  }
 
   // Computed properties for UI
   RxString get userName => (currentUser.value?.nombre ?? 'Usuario').obs;
   RxString get userEmail => (currentUser.value?.email ?? '').obs;
   RxString get userRole => (currentUser.value?.rol ?? '').obs;
+
+  // Role helpers
+  bool get isPaciente => currentUser.value?.isPaciente ?? false;
+  bool get isTutor => currentUser.value?.isTutor ?? false;
+  bool get isTerapeuta => currentUser.value?.isTerapeuta ?? false;
+  bool get canAccessChat => isTutor || isTerapeuta;
 
   // Login
   Future<void> login({

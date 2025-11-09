@@ -8,6 +8,7 @@ import 'package:xpressatec/presentation/features/home/widgets/bottom_nav_bar.dar
 import 'package:xpressatec/presentation/features/home/widgets/custom_drawer.dart';
 import 'package:xpressatec/presentation/features/statistics/screens/statistics_screen.dart';
 import 'package:xpressatec/presentation/features/teacch_board/screens/teacch_board_screen.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -19,23 +20,29 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Obx(() {
-          switch (navController.currentIndex.value) {
-            case 0: return const Text('Tablero TEACCH');
-            case 1: return const Text('Chat con Terapeuta');
-            case 2: return const Text('Personalización');
-            case 3: return const Text('Estadísticas');
-            default: return const Text('TEACCH App');
+          switch (navController.currentSection) {
+            case NavigationSection.teacch:
+              return const Text('Tablero TEACCH');
+            case NavigationSection.chat:
+              return const Text('Chat con Terapeuta');
+            case NavigationSection.customization:
+              return const Text('Personalización');
+            case NavigationSection.statistics:
+              return const Text('Estadísticas');
           }
         }),
       ),
       drawer: const CustomDrawer(),
       body: Obx(() {
-        switch (navController.currentIndex.value) {
-          case 0: return const TeacchBoardScreen();
-          case 1: return const ChatScreen();
-          case 2: return const CustomizationScreen();
-          case 3: return const StatisticsScreen();
-          default: return const TeacchBoardScreen();
+        switch (navController.currentSection) {
+          case NavigationSection.teacch:
+            return const TeacchBoardScreen();
+          case NavigationSection.chat:
+            return const ChatScreen();
+          case NavigationSection.customization:
+            return const CustomizationScreen();
+          case NavigationSection.statistics:
+            return const StatisticsScreen();
         }
       }),
       bottomNavigationBar: const BottomNavBar(),
