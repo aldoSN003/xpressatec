@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/link_tutor_controller.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class LinkTutorScreen extends GetView<LinkTutorController> {
   const LinkTutorScreen({super.key});
@@ -15,12 +15,7 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -40,7 +35,6 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const XpressatecHeader(),
                   const SizedBox(height: 16),
                   Text(
                     'Enlazar tutor',

@@ -7,7 +7,7 @@ import 'package:xpressatec/presentation/features/statistics/widgets/recent_phras
 import 'package:xpressatec/presentation/features/statistics/widgets/time_range_selector.dart';
 import 'package:xpressatec/presentation/features/statistics/widgets/timeline_chart_widget.dart';
 import 'package:xpressatec/presentation/features/statistics/widgets/top_words_chart_widget.dart';
-import 'package:xpressatec/presentation/shared/widgets/xpressatec_header.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header_appbar.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({Key? key}) : super(key: key);
@@ -27,9 +27,17 @@ class StatisticsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const XpressatecHeader(),
               const SizedBox(height: 16),
-              _buildPageTitle(context),
+              Row(
+                children: [
+                  Expanded(child: _buildPageTitle(context)),
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () => controller.refresh(),
+                    tooltip: 'Actualizar',
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               ...children,
             ],
@@ -49,18 +57,7 @@ class StatisticsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => controller.refresh(),
-          ),
-        ],
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {

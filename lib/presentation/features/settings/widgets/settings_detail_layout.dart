@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class SettingsDetailLayout extends StatelessWidget {
   const SettingsDetailLayout({
@@ -40,12 +40,7 @@ class SettingsDetailLayout extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -63,7 +58,6 @@ class SettingsDetailLayout extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const XpressatecHeader(),
                 const SizedBox(height: 16),
                 Text(
                   title,

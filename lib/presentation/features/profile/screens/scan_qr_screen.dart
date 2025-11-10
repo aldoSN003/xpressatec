@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../controllers/scan_qr_controller.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class ScanQrScreen extends GetView<ScanQrController> {
   const ScanQrScreen({super.key});
@@ -14,12 +14,7 @@ class ScanQrScreen extends GetView<ScanQrController> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -34,7 +29,6 @@ class ScanQrScreen extends GetView<ScanQrController> {
         child: SafeArea(
           child: Column(
             children: [
-              const XpressatecHeader(),
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),

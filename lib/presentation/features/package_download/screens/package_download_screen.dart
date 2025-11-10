@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../settings/widgets/download_status_card.dart';
 import '../controllers/audio_package_controller.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class PackageDownloadScreen extends StatefulWidget {
   const PackageDownloadScreen({super.key});
@@ -37,12 +37,7 @@ class _PackageDownloadScreenState extends State<PackageDownloadScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -194,7 +189,6 @@ class _PackageDownloadScreenState extends State<PackageDownloadScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const XpressatecHeader(),
                     const SizedBox(height: 16),
                     Text(
                       'Descargar paquetes de audio',

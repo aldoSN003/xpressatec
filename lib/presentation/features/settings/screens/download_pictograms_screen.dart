@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 import 'package:xpressatec/presentation/features/settings/widgets/download_status_card.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class DownloadPictogramsScreen extends StatefulWidget {
   const DownloadPictogramsScreen({super.key});
@@ -64,12 +64,7 @@ class _DownloadPictogramsScreenState extends State<DownloadPictogramsScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -97,7 +92,6 @@ class _DownloadPictogramsScreenState extends State<DownloadPictogramsScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const XpressatecHeader(),
                     const SizedBox(height: 16),
                     Text(
                       'Descargar pictogramas',
