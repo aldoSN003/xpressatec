@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/link_tutor_controller.dart';
@@ -15,8 +16,17 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Enlazar tutor'),
+        backgroundColor: colorScheme.primary,
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
         centerTitle: true,
+        title: SvgPicture.asset(
+          'assets/images/imagen.svg',
+          height: 32,
+          colorFilter: ColorFilter.mode(
+            colorScheme.onPrimary,
+            BlendMode.srcIn,
+          ),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -24,7 +34,7 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              colorScheme.primary.withOpacity(0.08),
+              colorScheme.primary.withOpacity(0.16),
               colorScheme.surface,
             ],
           ),
@@ -35,23 +45,22 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    'Enlazar tutor',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
                     'Comparte este código con tu tutor para enlazar su cuenta contigo.',
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.start,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Tu tutor podrá escanearlo desde su aplicación para comenzar a acompañarte en XPRESSATEC.',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      height: 1.4,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -85,33 +94,6 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
                       theme: theme,
                     );
                   }),
-                  const SizedBox(height: 32),
-                  Obx(() {
-                    final uuid = controller.patientUuid;
-                    if (uuid == null || uuid.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-                    return Column(
-                      children: [
-                        Text(
-                          'Tu identificador personal',
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: colorScheme.onSurface.withOpacity(0.75),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        SelectableText(
-                          uuid,
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.6,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
                 ],
               ),
             ),
@@ -136,14 +118,14 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
       borderRadius: BorderRadius.circular(24),
       boxShadow: [
         BoxShadow(
-          color: colorScheme.primary.withOpacity(0.12),
+          color: colorScheme.primary.withOpacity(0.18),
           blurRadius: 16,
           offset: const Offset(0, 8),
         ),
       ],
       border: Border.all(
-        color: colorScheme.primary.withOpacity(0.1),
-        width: 1.2,
+        color: colorScheme.primary.withOpacity(0.35),
+        width: 1.4,
       ),
     );
   }
@@ -171,13 +153,14 @@ class _QrContent extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withOpacity(0.12),
+            color: colorScheme.primary.withOpacity(0.18),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
         ],
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.1),
+          color: colorScheme.primary.withOpacity(0.35),
+          width: 1.4,
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -187,7 +170,7 @@ class _QrContent extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceVariant,
+              color: colorScheme.primary.withOpacity(0.08),
               borderRadius: BorderRadius.circular(20),
             ),
             child: ClipRRect(
@@ -202,7 +185,7 @@ class _QrContent extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'El tutor debe escanear este código desde su aplicación.',
+            'Pide a tu tutor que escanee este código desde su aplicación para completar el enlace.',
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface,
