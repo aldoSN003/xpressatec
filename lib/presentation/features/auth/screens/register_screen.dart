@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header.dart';
 
 class RegisterScreen extends GetView<AuthController> {
   const RegisterScreen({super.key});
@@ -24,12 +24,10 @@ class RegisterScreen extends GetView<AuthController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: true,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Get.back(),
-        ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
       body: SafeArea(
         // Use LayoutBuilder to create a responsive layout
@@ -84,11 +82,7 @@ class RegisterScreen extends GetView<AuthController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Icon
-            SvgPicture.asset(
-              "assets/images/app_logo.svg",
-              height: 120, // Adjusted for a more balanced look
-            ),
+            const XpressatecHeader(),
             const SizedBox(height: 24),
 
             // Title

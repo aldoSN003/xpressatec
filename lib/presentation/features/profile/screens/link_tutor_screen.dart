@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/link_tutor_controller.dart';
+import '../../../shared/widgets/xpressatec_header.dart';
 
 class LinkTutorScreen extends GetView<LinkTutorController> {
   const LinkTutorScreen({super.key});
@@ -16,14 +16,10 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white10,
-        iconTheme: IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: SvgPicture.asset(
-          'assets/images/imagen.svg',
-          height: 200,
-        
-        ),
+        automaticallyImplyLeading: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -44,6 +40,8 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const XpressatecHeader(),
+                  const SizedBox(height: 16),
                   Text(
                     'Enlazar tutor',
                     style: theme.textTheme.headlineSmall?.copyWith(

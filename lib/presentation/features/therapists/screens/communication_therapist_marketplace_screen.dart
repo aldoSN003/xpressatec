@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/communication_therapist_controller.dart';
 import '../models/communication_therapist.dart';
+import '../../../shared/widgets/xpressatec_header.dart';
 
 class CommunicationTherapistMarketplaceScreen extends GetView<CommunicationTherapistController> {
   const CommunicationTherapistMarketplaceScreen({super.key});
@@ -20,14 +20,10 @@ class CommunicationTherapistMarketplaceScreen extends GetView<CommunicationThera
     return Scaffold(
       backgroundColor: const Color(0xFFE3F2FD),
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading: true,
         elevation: 0,
-        title: SvgPicture.asset(
-          'assets/images/imagen.svg',
-          height: 32,
-          semanticsLabel: 'Xpressatec',
-        ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: colorScheme.onSurface,
       ),
       body: SafeArea(
         child: Padding(
@@ -35,6 +31,8 @@ class CommunicationTherapistMarketplaceScreen extends GetView<CommunicationThera
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const XpressatecHeader(),
+              const SizedBox(height: 16),
               Text(
                 'Terapeutas en comunicación',
                 style: theme.textTheme.headlineSmall?.copyWith(
