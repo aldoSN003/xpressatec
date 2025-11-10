@@ -1,160 +1,239 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:xpressatec/presentation/features/package_download/controllers/audio_package_controller.dart';
 
-import '../../settings/widgets/settings_detail_layout.dart';
+import '../../settings/widgets/download_status_card.dart';
+import '../controllers/audio_package_controller.dart';
 
-class PackageDownloadScreen extends StatelessWidget {
-  const PackageDownloadScreen({Key? key}) : super(key: key);
+class PackageDownloadScreen extends StatefulWidget {
+  const PackageDownloadScreen({super.key});
+
+  @override
+  State<PackageDownloadScreen> createState() => _PackageDownloadScreenState();
+}
+
+class _PackageDownloadScreenState extends State<PackageDownloadScreen> {
+  late final AudioPackageController _controller;
+  late final bool _navigateOnSuccess;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.find<AudioPackageController>();
+    final arguments = Get.arguments;
+    final bool fromSettings =
+        arguments is Map && (arguments['fromSettings'] as bool? ?? false);
+    _navigateOnSuccess = !fromSettings;
+    _controller.refreshStatus();
+  }
+
+  Future<void> _handleDownload() async {
+    await _controller.downloadPackage(navigateOnSuccess: _navigateOnSuccess);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AudioPackageController>();
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return SettingsDetailLayout(
-      title: 'Descargar paquetes de audio',
-      subtitle:
-          'Gestiona las voces disponibles para tus asistentes y mantenlas listas sin conexión.',
-      child: Obx(() {
-        return Container(
-          width: double.infinity,
-          decoration: SettingsDetailLayout.cardDecoration(colorScheme),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: _buildContent(context, controller, colorScheme),
-        );
-      }),
-    );
-  }
-
-  Widget _buildContent(
-    BuildContext context,
-    AudioPackageController controller,
-    ColorScheme colorScheme,
-  ) {
-    if (controller.isChecking.value) {
-      return const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Verificando paquetes disponibles...'),
-          ],
-        ),
-      );
-    }
-
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Align(
-          alignment: Alignment.center,
-          child: Icon(
-            Icons.download_rounded,
-            size: 72,
-            color: colorScheme.primary,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white10,
+        iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
+        title: SvgPicture.asset(
+          'assets/images/imagen.svg',
+          height: 180,
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white,
+              colorScheme.surface,
+            ],
           ),
         ),
-        const SizedBox(height: 24),
-        Text(
-          'Descarga el paquete de audio de tu asistente preferido y úsalo sin conexión.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
-        if (controller.availableAssistants.length > 1) ...[
-          Text(
-            'Selecciona un asistente:',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: controller.availableAssistants.map((assistant) {
-              final isSelected = controller.selectedAssistant.value == assistant;
-              return ChoiceChip(
-                label: Text(assistant),
-                selected: isSelected,
-                onSelected: controller.isDownloading.value
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Obx(() {
+                final bool isChecking = _controller.isChecking.value;
+                final bool isDownloading = _controller.isDownloading.value;
+                final bool downloaded = _controller.hasDownloaded.value;
+                final bool failed = _controller.downloadFailed.value;
+                final int total = _controller.totalFiles.value;
+                final int completed = _controller.currentFile.value;
+                final double? progress = total == 0
                     ? null
-                    : (selected) {
-                        if (selected) {
-                          controller.selectedAssistant.value = assistant;
-                        }
-                      },
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 24),
-        ],
-        if (controller.isDownloading.value) ...[
-          LinearProgressIndicator(
-            value: controller.downloadProgress.value,
-            minHeight: 8,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Descargando ${controller.currentFile.value} de ${controller.totalFiles.value}',
-            style: theme.textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            controller.currentWord.value,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+                    : (_controller.downloadProgress.value.isNaN
+                        ? null
+                        : _controller.downloadProgress.value);
+
+                final List<Widget> additionalChildren = [];
+
+                if (!downloaded && _controller.availableAssistants.length > 1) {
+                  additionalChildren.add(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Selecciona un asistente:',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: _controller.availableAssistants.map((assistant) {
+                            final isSelected =
+                                _controller.selectedAssistant.value == assistant;
+                            return ChoiceChip(
+                              label: Text(assistant),
+                              selected: isSelected,
+                              onSelected: (!isDownloading && !downloaded)
+                                  ? (selected) {
+                                      if (selected) {
+                                        _controller.selectedAssistant.value =
+                                            assistant;
+                                      }
+                                    }
+                                  : null,
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (isDownloading) {
+                  additionalChildren.addAll([
+                    LinearProgressIndicator(value: progress),
+                    const SizedBox(height: 12),
+                    Text(
+                      total == 0
+                          ? 'Preparando descarga...'
+                          : '$completed de $total archivos de audio',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ]);
+
+                  final String currentWord = _controller.currentWord.value;
+                  if (currentWord.isNotEmpty) {
+                    additionalChildren.add(
+                      Text(
+                        currentWord,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    );
+                  }
+                } else if (failed && _controller.errorMessage.isNotEmpty) {
+                  additionalChildren.add(
+                    Text(
+                      _controller.errorMessage.value,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.error,
+                      ),
+                    ),
+                  );
+                }
+
+                final IconData bannerIcon;
+                final Color bannerIconColor;
+                final Color bannerBackgroundColor;
+                final String bannerMessage;
+
+                if (downloaded) {
+                  bannerIcon = Icons.check_circle;
+                  bannerIconColor = colorScheme.primary;
+                  bannerBackgroundColor = colorScheme.primary.withOpacity(0.1);
+                  bannerMessage =
+                      'Los paquetes de audio ya están descargados en este dispositivo.';
+                } else if (failed) {
+                  bannerIcon = Icons.error_outline;
+                  bannerIconColor = colorScheme.error;
+                  bannerBackgroundColor = colorScheme.error.withOpacity(0.1);
+                  bannerMessage =
+                      'Ocurrió un error al descargar los paquetes de audio. Intenta nuevamente.';
+                } else if (isChecking) {
+                  bannerIcon = Icons.info_outline;
+                  bannerIconColor = colorScheme.primary;
+                  bannerBackgroundColor = colorScheme.primary.withOpacity(0.08);
+                  bannerMessage = 'Verificando paquetes disponibles...';
+                  additionalChildren.insert(
+                    0,
+                    const Center(child: CircularProgressIndicator()),
+                  );
+                } else {
+                  bannerIcon = Icons.cloud_download_outlined;
+                  bannerIconColor = colorScheme.primary;
+                  bannerBackgroundColor = colorScheme.primary.withOpacity(0.08);
+                  bannerMessage = 'Aún no has descargado los paquetes de audio.';
+                }
+
+                final String buttonLabel;
+                if (downloaded) {
+                  buttonLabel = 'Audios ya descargados';
+                } else if (isDownloading) {
+                  buttonLabel = 'Descargando paquetes de audio...';
+                } else if (isChecking) {
+                  buttonLabel = 'Verificando estado...';
+                } else {
+                  buttonLabel = 'Descargar paquetes de audio';
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Descargar paquetes de audio',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Para mejorar tu experiencia, puedes descargar los paquetes de audio desde el servidor a tu almacenamiento local. Solo es necesario hacerlo una vez.',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    DownloadStatusCard(
+                      bannerIcon: bannerIcon,
+                      bannerIconColor: bannerIconColor,
+                      bannerBackgroundColor: bannerBackgroundColor,
+                      bannerMessage: bannerMessage,
+                      buttonLabel: buttonLabel,
+                      buttonIcon: downloaded ? Icons.check : Icons.download,
+                      buttonEnabled:
+                          !isDownloading && !downloaded && !isChecking,
+                      onPressed: (!isDownloading && !downloaded && !isChecking)
+                          ? _handleDownload
+                          : null,
+                      additionalChildren: additionalChildren,
+                    ),
+                  ],
+                );
+              }),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-        ],
-        if (controller.errorMessage.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.error.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              controller.errorMessage.value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.error,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-        FilledButton.icon(
-          onPressed:
-              controller.isDownloading.value ? null : controller.downloadPackage,
-          icon: const Icon(Icons.download),
-          label: Text(
-            controller.isDownloading.value
-                ? 'Descargando...'
-                : 'Descargar paquete',
-          ),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
           ),
         ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed:
-              controller.isDownloading.value ? null : controller.skipDownload,
-          child: const Text('Omitir (descargar después)'),
-        ),
-      ],
+      ),
     );
   }
 }

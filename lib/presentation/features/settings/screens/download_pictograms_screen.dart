@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../customization/controllers/customization_controller.dart';
+import '../widgets/download_status_card.dart';
 
 class DownloadPictogramsScreen extends StatefulWidget {
   const DownloadPictogramsScreen({super.key});
@@ -115,74 +116,51 @@ class _DownloadPictogramsScreenState extends State<DownloadPictogramsScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Container(
-                      width: double.infinity,
-                      decoration: _cardDecoration(colorScheme),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 32,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (downloaded)
-                            _buildStatusBanner(
-                              colorScheme,
-                              icon: Icons.check_circle,
-                              background: colorScheme.primary.withOpacity(0.1),
-                              iconColor: colorScheme.primary,
-                              text:
-                                  'Los pictogramas ya están descargados en este dispositivo.',
-                            )
-                          else if (failed)
-                            _buildStatusBanner(
-                              colorScheme,
-                              icon: Icons.error_outline,
-                              background: colorScheme.error.withOpacity(0.1),
-                              iconColor: colorScheme.error,
-                              text:
-                                  'Ocurrió un error al descargar los pictogramas. Intenta nuevamente.',
-                            )
-                          else
-                            _buildStatusBanner(
-                              colorScheme,
-                              icon: Icons.cloud_download_outlined,
-                              background: colorScheme.primary.withOpacity(0.08),
-                              iconColor: colorScheme.primary,
-                              text:
-                                  'Descarga los pictogramas para usarlos sin conexión.',
-                            ),
-                          if (isDownloading) ...[
-                            const SizedBox(height: 24),
-                            LinearProgressIndicator(value: progress),
-                            const SizedBox(height: 12),
-                            Text(
-                              total == 0
-                                  ? 'Preparando descarga...'
-                                  : '$completed de $total pictogramas',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 24),
-                          FilledButton.icon(
-                            onPressed:
-                                (!isDownloading && !downloaded) ? _handleDownload : null,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white,
-                              minimumSize: const Size.fromHeight(48),
-                            ),
-                            icon: const Icon(Icons.download),
-                            label: Text(
-                              downloaded
-                                  ? 'Pictogramas ya descargados'
-                                  : 'Descargar pictogramas',
+                    DownloadStatusCard(
+                      bannerIcon: downloaded
+                          ? Icons.check_circle
+                          : failed
+                              ? Icons.error_outline
+                              : Icons.cloud_download_outlined,
+                      bannerIconColor: downloaded
+                          ? colorScheme.primary
+                          : failed
+                              ? colorScheme.error
+                              : colorScheme.primary,
+                      bannerBackgroundColor: downloaded
+                          ? colorScheme.primary.withOpacity(0.1)
+                          : failed
+                              ? colorScheme.error.withOpacity(0.1)
+                              : colorScheme.primary.withOpacity(0.08),
+                      bannerMessage: downloaded
+                          ? 'Los pictogramas ya están descargados en este dispositivo.'
+                          : failed
+                              ? 'Ocurrió un error al descargar los pictogramas. Intenta nuevamente.'
+                              : 'Descarga los pictogramas para usarlos sin conexión.',
+                      buttonLabel: downloaded
+                          ? 'Pictogramas ya descargados'
+                          : isDownloading
+                              ? 'Descargando pictogramas...'
+                              : 'Descargar pictogramas',
+                      buttonIcon: downloaded ? Icons.check : Icons.download,
+                      buttonEnabled: !isDownloading && !downloaded,
+                      onPressed: (!isDownloading && !downloaded)
+                          ? _handleDownload
+                          : null,
+                      additionalChildren: [
+                        if (isDownloading) ...[
+                          LinearProgressIndicator(value: progress),
+                          const SizedBox(height: 12),
+                          Text(
+                            total == 0
+                                ? 'Preparando descarga...'
+                                : '$completed de $total pictogramas',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurface,
                             ),
                           ),
                         ],
-                      ),
+                      ],
                     ),
                   ],
                 );
@@ -194,53 +172,4 @@ class _DownloadPictogramsScreenState extends State<DownloadPictogramsScreen> {
     );
   }
 
-  BoxDecoration _cardDecoration(ColorScheme colorScheme) {
-    return BoxDecoration(
-      color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(24),
-      boxShadow: [
-        BoxShadow(
-          color: colorScheme.primary.withOpacity(0.18),
-          blurRadius: 16,
-          offset: const Offset(0, 8),
-        ),
-      ],
-      border: Border.all(
-        color: colorScheme.primary.withOpacity(0.35),
-        width: 1.4,
-      ),
-    );
-  }
-
-  Widget _buildStatusBanner(
-    ColorScheme colorScheme, {
-    required IconData icon,
-    required Color background,
-    required Color iconColor,
-    required String text,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: iconColor),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
