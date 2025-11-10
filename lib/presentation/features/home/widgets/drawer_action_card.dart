@@ -21,12 +21,12 @@ class DrawerActionCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final List<Color> colors = gradientColors ??
-        [
-          colorScheme.primary,
-          Color.lerp(colorScheme.primary, colorScheme.primaryContainer, 0.6)!,
+        const [
+          Color(0xFF40C4FF),
+          Color(0xFFE1F5FE),
         ];
 
-    final Color foregroundColor = colorScheme.onPrimary;
+    final Color foregroundColor = Colors.white;
 
     return Material(
       color: Colors.transparent,
@@ -34,7 +34,7 @@ class DrawerActionCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
         child: Ink(
-          height: 76,
+          constraints: const BoxConstraints(minHeight: 72),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: colors,
@@ -44,9 +44,9 @@ class DrawerActionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: colors.last.withOpacity(0.25),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -59,12 +59,12 @@ class DrawerActionCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: foregroundColor,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     leadingIcon,
-                    color: colorScheme.primary,
+                    color: const Color(0xFF2962FF),
                     size: 26,
                   ),
                 ),
@@ -73,6 +73,7 @@ class DrawerActionCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         title,
