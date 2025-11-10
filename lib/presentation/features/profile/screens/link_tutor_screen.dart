@@ -108,7 +108,11 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48),
       decoration: _cardDecoration(colorScheme),
-      child: const Center(child: CircularProgressIndicator()),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(colorScheme.primary),
+        ),
+      ),
     );
   }
 
@@ -194,7 +198,11 @@ class _QrContent extends StatelessWidget {
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: onRefresh,
-            icon: const Icon(Icons.refresh),
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            icon: Icon(Icons.refresh, color: colorScheme.onPrimary),
             label: const Text('Actualizar código'),
           ),
         ],
@@ -249,7 +257,11 @@ class _ErrorState extends StatelessWidget {
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: onRetry,
-            icon: const Icon(Icons.refresh),
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            icon: Icon(Icons.refresh, color: colorScheme.onPrimary),
             label: const Text('Reintentar'),
           ),
         ],
