@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:xpressatec/core/config/routes.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
 
+import 'drawer_action_card.dart';
+
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
@@ -24,7 +26,7 @@ class CustomDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                 Colors.lightBlue,
+                  Colors.lightBlue,
                   colorScheme.primaryContainer,
                 ],
                 begin: Alignment.topLeft,
@@ -68,56 +70,59 @@ class CustomDrawer extends StatelessWidget {
             if (authController.isPaciente) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: DrawerMenuItem(
-                  icon: Icons.link,
-                  label: 'Enlazar tutor',
+                child: DrawerActionCard(
+                  leadingIcon: Icons.link,
+                  title: 'Enlazar tutor',
                   subtitle: 'Comparte tu código QR con tu tutor',
-                  isActive: Get.currentRoute == Routes.linkTutor,
                   onTap: () => Get.toNamed(Routes.linkTutor),
                 ),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          }),
-          // Escanear QR y Mis citas - Solo mostrar para tutores
-          Obx(() {
-            if (authController.isTutor) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    child: DrawerMenuItem(
-                      icon: Icons.qr_code_scanner,
-                      label: 'Escanear QR',
-                      subtitle: 'Escanea el código del paciente para enlazar',
-                      isActive: Get.currentRoute == Routes.scanQr,
-                      onTap: () => Get.toNamed(Routes.scanQr),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    child: DrawerMenuItem(
-                      icon: Icons.event_note,
-                      label: 'Mis citas',
-                      subtitle: 'Consulta el calendario de sesiones programadas',
-                      isActive: Get.currentRoute == Routes.tutorCalendar,
-                      onTap: () => Get.toNamed(Routes.tutorCalendar),
-                    ),
-                  ),
-                ],
               );
             }
             return const SizedBox.shrink();
           }),
+          // Escanear QR y Mis citas - Mostrar según rol
           Obx(() {
-            if (authController.isTutor || authController.isPaciente) {
+            final bool showScan = authController.isTutor;
+            final bool showAppointments =
+                authController.isTutor || authController.isTerapeuta;
+
+            if (!showScan && !showAppointments) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              children: [
+                if (showScan)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: DrawerActionCard(
+                      leadingIcon: Icons.qr_code_scanner,
+                      title: 'Escanear QR',
+                      subtitle: 'Escanea el código del paciente',
+                      onTap: () => Get.toNamed(Routes.scanQr),
+                    ),
+                  ),
+                if (showAppointments)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: DrawerActionCard(
+                      leadingIcon: Icons.event,
+                      title: 'Mis citas',
+                      subtitle: 'Revisa tu agenda de sesiones',
+                      onTap: () => Get.toNamed(Routes.tutorCalendar),
+                    ),
+                  ),
+              ],
+            );
+          }),
+          Obx(() {
+            if (authController.isTutor || authController.isTerapeuta) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: DrawerMenuItem(
-                  icon: Icons.person_search,
-                  label: 'Buscar terapeuta',
-                  isActive: Get.currentRoute == Routes.communicationTherapists,
+                child: DrawerActionCard(
+                  leadingIcon: Icons.person_search,
+                  title: 'Buscar terapeutas',
+                  subtitle: 'Explora terapeutas en comunicación',
                   onTap: () => Get.toNamed(Routes.communicationTherapists),
                 ),
               );
@@ -149,88 +154,6 @@ class CustomDrawer extends StatelessWidget {
           ),
 
         ],
-      ),
-    );
-  }
-}
-
-class DrawerMenuItem extends StatelessWidget {
-  const DrawerMenuItem({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.isActive = false,
-    this.subtitle,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool isActive;
-  final String? subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final Color activeColor = colorScheme.primary;
-    final Color inactiveColor = colorScheme.onSurface.withOpacity(0.8);
-    final Color foregroundColor = isActive ? activeColor : inactiveColor;
-    final Color subtitleColor = isActive
-        ? activeColor.withOpacity(0.8)
-        : colorScheme.onSurface.withOpacity(0.6);
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: isActive ? activeColor.withOpacity(0.08) : Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            crossAxisAlignment:
-                subtitle != null ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-            children: [
-              Icon(icon, color: foregroundColor),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      label,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: foregroundColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (subtitle != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          subtitle!,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: subtitleColor,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: foregroundColor,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
