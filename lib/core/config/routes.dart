@@ -7,10 +7,12 @@ import 'package:xpressatec/presentation/features/home/screens/home_screen.dart';
 import 'package:xpressatec/presentation/features/settings/screens/about_screen.dart';
 import 'package:xpressatec/presentation/features/settings/screens/settings_screen.dart';
 import 'package:xpressatec/presentation/features/splash/screens/splash_screen.dart';
+import 'package:xpressatec/presentation/features/therapists/screens/communication_therapist_marketplace_screen.dart';
 
 import '../../presentation/features/audio_testing/audio_testing_screen.dart';
 import '../../presentation/features/auth/screens/register_screen.dart';
 import '../../presentation/features/package_download/screens/package_download_screen.dart';
+import '../../core/bindings/communication_therapist_binding.dart';
 import '../../core/bindings/link_tutor_binding.dart';
 import '../../core/bindings/scan_qr_binding.dart';
 import '../../presentation/features/profile/screens/link_tutor_screen.dart';
@@ -30,7 +32,8 @@ class Routes {
   static const String about = '/about';
   static const String scanQr = '/scan-qr';
   static const String tutorCalendar = '/tutor-calendar';
- // static const String audioTesting = '/audio-testing';
+  static const String communicationTherapists = '/communication-therapists';
+  // static const String audioTesting = '/audio-testing';
 }
 
 class AppRoutes {
@@ -72,6 +75,11 @@ class AppRoutes {
       name: Routes.tutorCalendar,
       page: () => const TutorCalendarScreen(),
       binding: TutorCalendarBinding(),
+    ),
+    GetPage(
+      name: Routes.communicationTherapists,
+      page: () => const CommunicationTherapistMarketplaceScreen(),
+      binding: CommunicationTherapistBinding(),
     ),
     GetPage(
       name: Routes.settings,

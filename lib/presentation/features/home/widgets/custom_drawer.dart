@@ -207,6 +207,16 @@ class CustomDrawer extends StatelessWidget {
             }
             return const SizedBox.shrink();
           }),
+          Obx(() {
+            if (authController.isTutor || authController.isPaciente) {
+              return ListTile(
+                leading: Icon(Icons.person_search, color: colorScheme.primary),
+                title: const Text('Buscar terapeuta'),
+                onTap: () => Get.toNamed(Routes.communicationTherapists),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.settings),
