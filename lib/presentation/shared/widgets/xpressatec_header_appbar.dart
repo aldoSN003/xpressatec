@@ -5,55 +5,54 @@ class XpressatecHeaderAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   const XpressatecHeaderAppBar({
     super.key,
-    this.showBack = false,
     this.showMenu = false,
     this.onMenuTap,
+    this.showBack = false,
   });
 
-  final bool showBack;
   final bool showMenu;
   final VoidCallback? onMenuTap;
+  final bool showBack;
 
   @override
-  Size get preferredSize => const Size.fromHeight(200);
+  Size get preferredSize => const Size.fromHeight(80);
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.onSurface;
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurface;
 
     return AppBar(
-      automaticallyImplyLeading: false,
+      backgroundColor: theme.scaffoldBackgroundColor,
       elevation: 0,
-      backgroundColor: Colors.transparent,
+      automaticallyImplyLeading: false,
+      centerTitle: true,
       foregroundColor: color,
-      flexibleSpace: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: SvgPicture.asset(
-                'assets/images/imagen.svg',
-                height: 200,
-                fit: BoxFit.contain,
-              ),
-            ),
-            if (showBack)
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: color),
-                  onPressed: () => Navigator.of(context).maybePop(),
-                ),
-              ),
-            if (showMenu)
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(Icons.menu, color: color),
-                  onPressed: onMenuTap,
-                ),
-              ),
-          ],
-        ),
+      toolbarHeight: preferredSize.height,
+      leading: showBack
+          ? IconButton(
+              icon: Icon(Icons.arrow_back, color: color),
+              onPressed: () => Navigator.of(context).maybePop(),
+            )
+          : (showMenu
+              ? Builder(
+                  builder: (context) {
+                    return IconButton(
+                      icon: Icon(Icons.menu, color: color),
+                      onPressed: onMenuTap ?? () {
+                        final scaffoldState = Scaffold.maybeOf(context);
+                        if (scaffoldState != null && scaffoldState.hasDrawer) {
+                          scaffoldState.openDrawer();
+                        }
+                      },
+                    );
+                  },
+                )
+              : null),
+      title: SvgPicture.asset(
+        'assets/images/imagen.svg',
+        height: 200,
+        fit: BoxFit.contain,
       ),
     );
   }
