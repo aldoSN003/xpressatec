@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../customization/controllers/customization_controller.dart';
+import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 
 class DownloadPictogramsScreen extends StatefulWidget {
   const DownloadPictogramsScreen({super.key});
