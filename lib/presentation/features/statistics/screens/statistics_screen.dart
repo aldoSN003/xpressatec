@@ -7,7 +7,6 @@ import 'package:xpressatec/presentation/features/statistics/widgets/recent_phras
 import 'package:xpressatec/presentation/features/statistics/widgets/time_range_selector.dart';
 import 'package:xpressatec/presentation/features/statistics/widgets/timeline_chart_widget.dart';
 import 'package:xpressatec/presentation/features/statistics/widgets/top_words_chart_widget.dart';
-import 'package:xpressatec/presentation/shared/widgets/xpressatec_header_appbar.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({Key? key}) : super(key: key);
@@ -46,127 +45,127 @@ class StatisticsScreen extends StatelessWidget {
       );
 
       if (enableRefresh) {
-        return RefreshIndicator(
+        final refreshable = RefreshIndicator(
           onRefresh: () => controller.refresh(),
           child: scrollView,
         );
+
+        return SafeArea(
+          bottom: false,
+          child: refreshable,
+        );
       }
 
-      return scrollView;
+      return SafeArea(
+        bottom: false,
+        child: scrollView,
+      );
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const XpressatecHeaderAppBar(showBack: true),
-      body: SafeArea(
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            return buildContent(
-              children: const [
-                SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Cargando estadísticas...'),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }
-
-          if (controller.errorMessage.isNotEmpty) {
-            return buildContent(
-              children: [
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline,
-                          size: 64, color: Colors.red),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error: ${controller.errorMessage.value}',
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => controller.refresh(),
-                        child: const Text('Reintentar'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }
-
-          if (controller.allPhrases.isEmpty) {
-            return buildContent(
-              enableRefresh: true,
-              children: [
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      Icon(Icons.analytics_outlined,
-                          size: 64, color: Colors.grey[400]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Aún no hay frases guardadas',
-                        style:
-                            TextStyle(fontSize: 18, color: Colors.grey[600]),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Genera y guarda frases para ver tus estadísticas',
-                        style: TextStyle(color: Colors.grey[500]),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }
-
-          return buildContent(
-            enableRefresh: true,
-            children: [
-              TimeRangeSelector(
-                selectedRange: controller.selectedTimeRange.value,
-                onChanged: (range) => controller.changeTimeRange(range),
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return buildContent(
+          children: const [
+            SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Cargando estadísticas...'),
+                ],
               ),
-              const SizedBox(height: 16),
-              OverviewCards(statistics: controller.statistics.value),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Actividad'),
-              const SizedBox(height: 12),
-              TimelineChartWidget(statistics: controller.statistics.value),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Palabras Más Usadas'),
-              const SizedBox(height: 12),
-              TopWordsChartWidget(statistics: controller.statistics.value),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Uso por Categoría'),
-              const SizedBox(height: 12),
-              CategoryPieChartWidget(statistics: controller.statistics.value),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Frases Recientes'),
-              const SizedBox(height: 12),
-              RecentPhrasesList(phrases: controller.filteredPhrases),
-            ],
-          );
-        }),
-      ),
-    );
+            ),
+          ],
+        );
+      }
+
+      if (controller.errorMessage.isNotEmpty) {
+        return buildContent(
+          children: [
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: ${controller.errorMessage.value}',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => controller.refresh(),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      }
+
+      if (controller.allPhrases.isEmpty) {
+        return buildContent(
+          enableRefresh: true,
+          children: [
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Icon(Icons.analytics_outlined,
+                      size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Aún no hay frases guardadas',
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Genera y guarda frases para ver tus estadísticas',
+                    style: TextStyle(color: Colors.grey[500]),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      }
+
+      return buildContent(
+        enableRefresh: true,
+        children: [
+          TimeRangeSelector(
+            selectedRange: controller.selectedTimeRange.value,
+            onChanged: (range) => controller.changeTimeRange(range),
+          ),
+          const SizedBox(height: 16),
+          OverviewCards(statistics: controller.statistics.value),
+          const SizedBox(height: 24),
+          _buildSectionTitle('Actividad'),
+          const SizedBox(height: 12),
+          TimelineChartWidget(statistics: controller.statistics.value),
+          const SizedBox(height: 24),
+          _buildSectionTitle('Palabras Más Usadas'),
+          const SizedBox(height: 12),
+          TopWordsChartWidget(statistics: controller.statistics.value),
+          const SizedBox(height: 24),
+          _buildSectionTitle('Uso por Categoría'),
+          const SizedBox(height: 12),
+          CategoryPieChartWidget(statistics: controller.statistics.value),
+          const SizedBox(height: 24),
+          _buildSectionTitle('Frases Recientes'),
+          const SizedBox(height: 12),
+          RecentPhrasesList(phrases: controller.filteredPhrases),
+        ],
+      );
+    });
   }
 
   Widget _buildSectionTitle(String title) {

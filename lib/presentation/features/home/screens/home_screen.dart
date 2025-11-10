@@ -6,14 +6,17 @@ import 'package:xpressatec/presentation/features/home/widgets/bottom_nav_bar.dar
 import 'package:xpressatec/presentation/features/home/widgets/custom_drawer.dart';
 import 'package:xpressatec/presentation/features/statistics/screens/statistics_screen.dart';
 import 'package:xpressatec/presentation/features/teacch_board/screens/teacch_board_screen.dart';
+import 'package:xpressatec/presentation/features/teacch_board/widgets/generate_phrase_fab.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header_appbar.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final NavigationController navController = Get.find();
-    final theme = Theme.of(context);
 
     return Obx(() {
       final section = navController.currentSection;
@@ -32,17 +35,24 @@ class HomeScreen extends StatelessWidget {
       }
 
       return Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
         appBar: section == NavigationSection.chat
             ? null
-            : AppBar(
-                automaticallyImplyLeading: true,
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                foregroundColor: theme.colorScheme.onSurface,
+            : XpressatecHeaderAppBar(
+                showMenu: true,
+                onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
               ),
         drawer: const CustomDrawer(),
         body: body,
         bottomNavigationBar: const BottomNavBar(),
+        floatingActionButton: section == NavigationSection.teacch
+            ? const TeacchGeneratePhraseFab()
+            : null,
+        floatingActionButtonLocation:
+            section == NavigationSection.teacch
+                ? FloatingActionButtonLocation.centerFloat
+                : null,
       );
     });
   }
