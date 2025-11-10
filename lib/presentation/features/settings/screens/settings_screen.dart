@@ -50,6 +50,13 @@ class SettingsScreen extends StatelessWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Get.toNamed(Routes.downloadPictograms),
           ),
+          ListTile(
+            leading: const Icon(Icons.headset_mic_outlined),
+            title: const Text('Descargar paquetes de audio'),
+            subtitle: const Text('Gestionar voces de asistentes'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Get.toNamed(Routes.packageDownload),
+          ),
           const Divider(),
           _buildSectionTitle(context, 'Soporte'),
           ListTile(
@@ -61,13 +68,6 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.help_outline),
             title: const Text('Ayuda'),
             onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.download),
-            title: const Text('Descargar paquetes de audio'),
-            subtitle: const Text('Gestionar voces de asistentes'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Get.toNamed(Routes.packageDownload),
           ),
         ],
       ),
