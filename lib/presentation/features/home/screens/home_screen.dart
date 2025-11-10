@@ -1,44 +1,59 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/chat/screens/chat_screen.dart';
-import 'package:xpressatec/presentation/features/customization/screens/customization_screen.dart';
 import 'package:xpressatec/presentation/features/home/controllers/navigation_controller.dart';
 import 'package:xpressatec/presentation/features/home/widgets/bottom_nav_bar.dart';
 import 'package:xpressatec/presentation/features/home/widgets/custom_drawer.dart';
 import 'package:xpressatec/presentation/features/statistics/screens/statistics_screen.dart';
 import 'package:xpressatec/presentation/features/teacch_board/screens/teacch_board_screen.dart';
+import 'package:xpressatec/presentation/features/teacch_board/widgets/generate_phrase_fab.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header_appbar.dart';
+
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final NavigationController navController = Get.find();
 
-    return Scaffold(
-      appBar: AppBar(
+    return Obx(() {
+      final section = navController.currentSection;
+      Widget body;
+
+      switch (section) {
+        case NavigationSection.teacch:
+          body = const TeacchBoardScreen();
+          break;
+        case NavigationSection.chat:
+          body = const ChatScreen();
+          break;
+        case NavigationSection.statistics:
+          body = const StatisticsScreen();
+          break;
+      }
+
+      return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.white,
-        title: Obx(() {
-          switch (navController.currentIndex.value) {
-            case 0: return const Text('Tablero TEACCH');
-            case 1: return const Text('Chat con Terapeuta');
-            case 2: return const Text('Personalización');
-            case 3: return const Text('Estadísticas');
-            default: return const Text('TEACCH App');
-          }
-        }),
-      ),
-      drawer: const CustomDrawer(),
-      body: Obx(() {
-        switch (navController.currentIndex.value) {
-          case 0: return const TeacchBoardScreen();
-          case 1: return const ChatScreen();
-          case 2: return const CustomizationScreen();
-          case 3: return const StatisticsScreen();
-          default: return const TeacchBoardScreen();
-        }
-      }),
-      bottomNavigationBar: const BottomNavBar(),
-    );
+        appBar: section == NavigationSection.chat
+            ? null
+            : XpressatecHeaderAppBar(
+                showMenu: true,
+                onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+              ),
+        drawer: const CustomDrawer(),
+        body: body,
+        bottomNavigationBar: const BottomNavBar(),
+        floatingActionButton: section == NavigationSection.teacch
+            ? const TeacchGeneratePhraseFab()
+            : null,
+        floatingActionButtonLocation:
+            section == NavigationSection.teacch
+                ? FloatingActionButtonLocation.centerFloat
+                : null,
+      );
+    });
   }
 }

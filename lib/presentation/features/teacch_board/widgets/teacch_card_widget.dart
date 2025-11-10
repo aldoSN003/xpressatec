@@ -1,7 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:xpressatec/core/theme/app_fonts.dart';
 import 'package:xpressatec/data/models/image_model.dart';
+import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 
 
 // Enum to define the type of content the card will display.
@@ -223,17 +224,9 @@ class TeacchCardWidget extends StatelessWidget {
   /// Loads the appropriate ImageProvider (FileImage or AssetImage).
   Future<ImageProvider> _loadImageProvider() async {
     if (imageModel == null) {
-      throw Exception("ImageModel no proporcionado");
+      throw Exception('ImageModel no proporcionado');
     }
-    if (imageModel!.isLocal) {
-      final file = File(imageModel!.imagePath);
-      if (await file.exists()) {
-        return FileImage(file);
-      } else {
-        throw Exception("La imagen local no existe");
-      }
-    } else {
-      return AssetImage(imageModel!.imagePath);
-    }
+    final customizationController = Get.find<CustomizationController>();
+    return customizationController.getImageProvider(imageModel!.imagePath);
   }
 }

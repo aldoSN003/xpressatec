@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:xpressatec/core/config/routes.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
+
+import 'drawer_action_card.dart';
+
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
@@ -10,96 +14,131 @@ class CustomDrawer extends StatelessWidget {
     // Usa Get.find con una verificación de seguridad
     final AuthController authController = Get.find<AuthController>();
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Colors.blue,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.lightBlue,
+                  colorScheme.primaryContainer,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: Colors.blue),
+                  backgroundColor: colorScheme.onPrimary,
+                  child: Icon(Icons.person, size: 40, color: colorScheme.primary),
                 ),
                 const SizedBox(height: 12),
                 Obx(() => Text(
                   authController.userName.value,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 )),
                 Obx(() => Text(
                   authController.userEmail.value,
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onPrimary.withOpacity(0.8),
+                  ),
                 )),
                 Obx(() => Text(
                   'Rol: ${authController.userRole.value}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onPrimary.withOpacity(0.7),
+                  ),
                 )),
               ],
             ),
           ),
-          // Enlazar con Terapeuta (Destacado) - Solo mostrar para pacientes y tutores
+          // Enlazar tutor (Destacado) - Solo mostrar para pacientes
           Obx(() {
-            if (authController.userRole.value.toLowerCase() != 'terapeuta') {
-              return Container(
-                margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade400, Colors.blue.shade600],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blue.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ListTile(
-                  onTap: () => Get.toNamed('/link-therapist'),
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.link, color: Colors.blue),
-                  ),
-                  title: const Text(
-                    'Enlazar con Terapeuta',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: const Text(
-                    'Conecta con tu especialista',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                  trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+            if (authController.isPaciente) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: DrawerActionCard(
+                  leadingIcon: Icons.link,
+                  title: 'Enlazar tutor',
+                  subtitle: 'Comparte tu código QR con tu tutor',
+                  onTap: () => Get.toNamed(Routes.linkTutor),
                 ),
               );
-            } else {
+            }
+            return const SizedBox.shrink();
+          }),
+          // Escanear QR y Mis citas - Mostrar según rol
+          Obx(() {
+            final bool showScan = authController.isTutor;
+            final bool showAppointments =
+                authController.isTutor || authController.isTerapeuta;
+
+            if (!showScan && !showAppointments) {
               return const SizedBox.shrink();
             }
+
+            return Column(
+              children: [
+                if (showScan)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: DrawerActionCard(
+                      leadingIcon: Icons.qr_code_scanner,
+                      title: 'Escanear QR',
+                      subtitle: 'Escanea el código del paciente',
+                      onTap: () => Get.toNamed(Routes.scanQr),
+                    ),
+                  ),
+                if (showAppointments)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: DrawerActionCard(
+                      leadingIcon: Icons.event,
+                      title: 'Mis citas',
+                      subtitle: 'Revisa tu agenda de sesiones',
+                      onTap: () => Get.toNamed(Routes.tutorCalendar),
+                    ),
+                  ),
+              ],
+            );
+          }),
+          Obx(() {
+            if (authController.isTutor || authController.isTerapeuta) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: DrawerActionCard(
+                  leadingIcon: Icons.person_search,
+                  title: 'Buscar terapeutas',
+                  subtitle: 'Explora terapeutas en comunicación',
+                  onTap: () => Get.toNamed(Routes.communicationTherapists),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
           }),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Ajustes'),
-            onTap: () => Get.toNamed('/settings'),
+            onTap: () => Get.toNamed(Routes.settings),
           ),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: const Text('Acerca de'),
-            onTap: () => Get.toNamed('/about'),
+            onTap: () => Get.toNamed(Routes.about),
           ),
           ListTile(
             leading: const Icon(Icons.mic, color: Colors.orange),

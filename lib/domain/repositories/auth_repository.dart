@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import '../entities/user.dart';
 
 abstract class AuthRepository {
@@ -20,4 +22,6 @@ abstract class AuthRepository {
   Future<User?> getCurrentUser();
 
   Future<bool> isLoggedIn();
+
+  Future<Uint8List> getPatientQr(String uuid);
 }

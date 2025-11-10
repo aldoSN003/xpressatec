@@ -1,41 +1,55 @@
+import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:xpressatec/core/constants/app_constants.dart';
 import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/category_mapper.dart';
+import '../../settings/widgets/settings_detail_layout.dart';
 
 class CustomizationScreen extends GetView<CustomizationController> {
   const CustomizationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: FutureBuilder<TreeNode<CategoryData>>(
-        future: _loadCategories(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+    final colorScheme = Theme.of(context).colorScheme;
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
+    return SettingsDetailLayout(
+      title: 'Personalización',
+      subtitle: 'Gestiona tus pictogramas locales y categorías.',
+      expandChild: true,
+      child: Container(
+        width: double.infinity,
+        decoration: SettingsDetailLayout.cardDecoration(colorScheme),
+        padding: const EdgeInsets.all(16),
+        child: Obx(() {
+          final refreshKey = controller.treeRefreshToken.value;
+          return FutureBuilder<TreeNode<CategoryData>>(
+            key: ValueKey(refreshKey),
+            future: _loadCategories(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-          if (!snapshot.hasData || snapshot.data!.children.isEmpty) {
-            return const Center(
-              child: Text('No hay categorías disponibles'),
-            );
-          }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              }
 
-          return _buildTreeView(context, snapshot.data!);
-        },
+              if (!snapshot.hasData || snapshot.data!.children.isEmpty) {
+                return const Center(
+                  child: Text('No hay categorías disponibles'),
+                );
+              }
+
+              return _buildTreeView(context, snapshot.data!);
+            },
+          );
+        }),
       ),
     );
   }
@@ -162,31 +176,54 @@ class CustomizationScreen extends GetView<CustomizationController> {
       // File (image asset) nodes
       iconWidget = ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.asset(
-          categoryData.path, // ✅ this already points to a valid asset
-          width: iconSize,
-          height: iconSize,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(
-            width: iconSize,
-            height: iconSize,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.broken_image_outlined,
-              color: Colors.grey,
-              size: iconSize * 0.5,
-            ),
-          ),
+        child: FutureBuilder<ImageProvider>(
+          future: controller.getImageProvider(categoryData.path),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                width: iconSize,
+                height: iconSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SizedBox(
+                  width: iconSize * 0.4,
+                  height: iconSize * 0.4,
+                  child: const CircularProgressIndicator(strokeWidth: 2),
+                ),
+              );
+            }
+            if (snapshot.hasError || !snapshot.hasData) {
+              return Container(
+                width: iconSize,
+                height: iconSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.broken_image_outlined,
+                  color: Colors.grey,
+                  size: iconSize * 0.5,
+                ),
+              );
+            }
+            return Image(
+              image: snapshot.data!,
+              width: iconSize,
+              height: iconSize,
+              fit: BoxFit.cover,
+            );
+          },
         ),
       );
     }
 
     return Card(
-      color:Colors.white,
+      color: Colors.white,
       margin: cardMargin,
       elevation: isDir ? 2 : 0.5,
       shape: RoundedRectangleBorder(
@@ -226,6 +263,15 @@ class CustomizationScreen extends GetView<CustomizationController> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            if (isDir)
+              IconButton(
+                onPressed: () => controller.addCustomPictogram(categoryData.path),
+                icon: Icon(
+                  Icons.add_photo_alternate_outlined,
+                  color: Colors.teal[700],
+                ),
+                tooltip: 'Agregar pictograma',
+              ),
           ],
         ),
       ),
@@ -236,20 +282,9 @@ class CustomizationScreen extends GetView<CustomizationController> {
     final categoryData = item.data;
     if (categoryData == null) return;
 
-    print(
-        'Tapped item: ${categoryData.name} (isDir: ${categoryData.isDirectory})');
-    print('Path: ${categoryData.path}');
-
-    // Get.snackbar(
-    //   categoryData.isDirectory ? 'Carpeta' : 'Elemento',
-    //   categoryData.name,
-    //   backgroundColor: AppColors.getColor(categoryData.colorName),
-    //   colorText: Colors.white,
-    //   duration: const Duration(seconds: 2),
-    //   snackPosition: SnackPosition.BOTTOM,
-    //   margin: const EdgeInsets.all(16),
-    //   borderRadius: 12,
-    // );
+    if (!categoryData.isDirectory) {
+      await controller.replaceImage(categoryData.path);
+    }
   }
 
   Future<TreeNode<CategoryData>> _loadCategories() async {
@@ -282,10 +317,14 @@ class CustomizationScreen extends GetView<CustomizationController> {
       );
 
       final List<AssetNode> assetTree =
-      categoryMapper.getAssetTreeForCategory(categoryName);
+          categoryMapper.getAssetTreeForCategory(categoryName);
 
       mainCategoryNode.addAll(
-        _convertAssetNodes(assetTree, colorName),
+        _convertAssetNodes(
+          categoryModel.contentPath,
+          assetTree,
+          colorName,
+        ),
       );
       root.add(mainCategoryNode);
     }
@@ -294,13 +333,14 @@ class CustomizationScreen extends GetView<CustomizationController> {
   }
 
   List<TreeNode<CategoryData>> _convertAssetNodes(
-      List<AssetNode> assetNodes,
-      String inheritedColorName,
-      ) {
-    List<TreeNode<CategoryData>> children = [];
+    String parentPath,
+    List<AssetNode> assetNodes,
+    String inheritedColorName,
+  ) {
+    final List<TreeNode<CategoryData>> children = [];
 
-    for (var assetNode in assetNodes) {
-      final isDir = assetNode.isDirectory;
+    for (final assetNode in assetNodes) {
+      final bool isDir = assetNode.isDirectory;
 
       final nodeData = CategoryData(
         name: assetNode.displayName,
@@ -317,16 +357,49 @@ class CustomizationScreen extends GetView<CustomizationController> {
         data: nodeData,
       );
 
-      if (isDir && assetNode.children.isNotEmpty) {
+      if (isDir) {
         treeNode.addAll(
-          _convertAssetNodes(assetNode.children, inheritedColorName),
+          _convertAssetNodes(
+            assetNode.path,
+            assetNode.children,
+            inheritedColorName,
+          ),
         );
       }
 
       children.add(treeNode);
     }
 
+    children.addAll(
+      _buildCustomNodes(parentPath, inheritedColorName),
+    );
+
     return children;
+  }
+
+  List<TreeNode<CategoryData>> _buildCustomNodes(
+    String parentPath,
+    String inheritedColorName,
+  ) {
+    final customItems = controller.getCustomPictogramsForParent(parentPath);
+    if (customItems.isEmpty) {
+      return const [];
+    }
+
+    return customItems
+        .map(
+          (item) => TreeNode<CategoryData>(
+            key: 'custom_${item.id}',
+            data: CategoryData(
+              name: item.name,
+              colorName: inheritedColorName,
+              icon: Icons.image_outlined,
+              path: item.relativePath,
+              isDirectory: false,
+            ),
+          ),
+        )
+        .toList();
   }
 
   double _getResponsiveValue({

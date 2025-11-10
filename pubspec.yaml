@@ -11,7 +11,6 @@ dependencies:
   audioplayers: ^6.5.1
   cloud_firestore: ^6.0.3
   dio: ^5.9.0
-  firebase_auth: ^6.1.1
   firebase_core: ^4.2.0
   firebase_storage: ^13.0.3
   fl_chart: ^1.1.1
@@ -21,13 +20,19 @@ dependencies:
   flutter_chat_ui: ^2.9.1
   flutter_dotenv: ^6.0.0
   flutter_svg: ^2.2.1
+  table_calendar: ^3.0.9
   get: ^4.7.2
   hive_flutter: ^1.1.0
   http: ^1.5.0
   intl: ^0.20.2
+  mobile_scanner: ^5.1.1
+  image_picker: ^1.1.2
+  path: ^1.9.0
   path_provider: ^2.1.5
   shared_preferences: ^2.5.3
   web_socket_channel: ^3.0.3
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

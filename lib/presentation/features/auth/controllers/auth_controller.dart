@@ -7,25 +7,16 @@ import '../../../../domain/usecases/auth/register_usecase.dart';
 import '../../../../core/config/routes.dart';
 
 class AuthController extends GetxController {
-
-
-
-  @override
-  void onInit() {
-    super.onInit();
-    _loadCurrentUser(); // Load user on startup
-  }
-
-
-
-
   // Observable state
   final Rx<User?> currentUser = Rx<User?>(null);
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-  final RxString selectedRole = 'Paciente'.obs;  // ADD THIS LINE
+  final RxString selectedRole = 'Paciente'.obs;
 
-
+  final RxString userName = 'Usuario'.obs;
+  final RxString userEmail = ''.obs;
+  final RxString userRole = ''.obs;
+  final RxnString userUuid = RxnString();
 
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
@@ -39,12 +30,22 @@ class AuthController extends GetxController {
     required this.getCurrentUserUseCase,
   });
 
-
+  @override
+  void onInit() {
+    super.onInit();
+    _loadCurrentUser(); // Load user on startup
+  }
 
   // Computed properties for UI
-  RxString get userName => (currentUser.value?.nombre ?? 'Usuario').obs;
-  RxString get userEmail => (currentUser.value?.email ?? '').obs;
-  RxString get userRole => (currentUser.value?.rol ?? '').obs;
+  String? get uuid => userUuid.value ?? currentUser.value?.uuid;
+
+  String? get patientUuid => uuid;
+
+  // Role helpers
+  bool get isPaciente => currentUser.value?.isPaciente ?? false;
+  bool get isTutor => currentUser.value?.isTutor ?? false;
+  bool get isTerapeuta => currentUser.value?.isTerapeuta ?? false;
+  bool get canAccessChat => isTutor || isTerapeuta;
 
   // Login
   Future<void> login({
@@ -60,7 +61,7 @@ class AuthController extends GetxController {
         password: password,
       );
 
-      currentUser.value = user;
+      _setCurrentUser(user);
 
       // Navigate based on role
       _navigateByRole(user.rol);
@@ -104,7 +105,7 @@ class AuthController extends GetxController {
         cedula: cedula,
       );
 
-      currentUser.value = user;
+      _setCurrentUser(user);
 
       // Navigate based on role
       _navigateByRole(user.rol);
@@ -130,7 +131,7 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     try {
       await logoutUseCase();
-      currentUser.value = null;
+      _setCurrentUser(null);
       Get.offAllNamed(Routes.login);
       Get.snackbar(
         'Sesión cerrada',
@@ -170,15 +171,23 @@ class AuthController extends GetxController {
     try {
       final user = await getCurrentUserUseCase();
       if (user != null) {
-        currentUser.value = user;
+        _setCurrentUser(user);
         print('✓ User loaded: ${user.nombre}');
+      } else {
+        _setCurrentUser(null);
       }
     } catch (e) {
       print('✗ Error loading user: $e');
     }
   }
 
-
+  void _setCurrentUser(User? user) {
+    currentUser.value = user;
+    userName.value = user?.nombre ?? 'Usuario';
+    userEmail.value = user?.email ?? '';
+    userRole.value = user?.rol ?? '';
+    userUuid.value = user?.uuid;
+  }
 
   Future<void> checkAutoLogin() async {
     // A small delay to let the splash screen be visible
@@ -187,17 +196,19 @@ class AuthController extends GetxController {
     try {
       final user = await getCurrentUserUseCase();
       if (user != null) {
-        currentUser.value = user;
+        _setCurrentUser(user);
         print('✓ Auto-login successful for: ${user.nombre}');
         // Navigate to home since we found a user
         Get.offAllNamed(Routes.home);
       } else {
         // Navigate to login if no user is in cache
+        _setCurrentUser(null);
         Get.offAllNamed(Routes.login);
       }
     } catch (e) {
       print('✗ No cached user found or error loading user: $e');
       // Navigate to login on any error
+      _setCurrentUser(null);
       Get.offAllNamed(Routes.login);
     }
   }

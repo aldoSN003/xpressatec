@@ -1,14 +1,17 @@
 import 'package:get/get.dart';
+import '../../data/datasources/local/local_asset_storage.dart';
 import '../../data/datasources/local/local_storage.dart';
-import '../../data/datasources/remote/firebase_auth_datasource.dart';
+import '../../data/datasources/remote/api_auth_datasource.dart';
 import '../../data/datasources/remote/firebase_storage_datasource.dart';
 import '../../data/datasources/remote/firestore_datasource.dart'; // 🆕 ADD
+import '../../data/datasources/remote/media_api_datasource.dart';
 import '../../data/datasources/local/audio_package_manager.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/repositories/phrase_repository_impl.dart'; // 🆕 ADD
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/phrase_repository.dart'; // 🆕 ADD
 import '../../domain/usecases/auth/get_current_user_usecase.dart';
+import '../../domain/usecases/auth/get_patient_qr_usecase.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
 import '../../domain/usecases/auth/logout_usecase.dart';
 import '../../domain/usecases/auth/register_usecase.dart';
@@ -16,6 +19,7 @@ import '../../domain/usecases/phrase/save_phrase_usecase.dart'; // 🆕 ADD
 import '../../domain/usecases/phrase/get_user_phrases_usecase.dart'; // 🆕 ADD
 import '../../presentation/features/auth/controllers/auth_controller.dart';
 import '../../presentation/features/package_download/controllers/audio_package_controller.dart';
+import '../../presentation/features/customization/controllers/customization_controller.dart';
 import '../utils/category_mapper.dart';
 
 class InitialBinding extends Bindings {
@@ -23,13 +27,23 @@ class InitialBinding extends Bindings {
   Future<void> dependencies() async {
     // Core dependencies - available globally
     Get.put<LocalStorage>(LocalStorage(), permanent: true);
+    Get.put<MediaApiDatasource>(MediaApiDatasourceImpl(), permanent: true);
+    Get.put<LocalAssetStorage>(LocalAssetStorage(), permanent: true);
+    Get.put<CustomizationController>(
+      CustomizationController(
+        mediaApiDatasource: Get.find<MediaApiDatasource>(),
+        localAssetStorage: Get.find<LocalAssetStorage>(),
+        localStorage: Get.find<LocalStorage>(),
+      ),
+      permanent: true,
+    );
     // 🆕 Initialize CategoryMapper
     final categoryMapper = CategoryMapper();
     await categoryMapper.initialize();
     print('✅ CategoryMapper ready');
     // Firebase Auth datasource
-    Get.put<FirebaseAuthDatasource>(
-      FirebaseAuthDatasourceImpl(),
+    Get.put<ApiAuthDatasource>(
+      ApiAuthDatasourceImpl(),
       permanent: true,
     );
 
@@ -65,7 +79,7 @@ class InitialBinding extends Bindings {
     // Auth Repository
     Get.put<AuthRepository>(
       AuthRepositoryImpl(
-        firebaseAuthDatasource: Get.find<FirebaseAuthDatasource>(),
+        apiAuthDatasource: Get.find<ApiAuthDatasource>(),
         localStorage: Get.find<LocalStorage>(),
       ),
       permanent: true,
@@ -98,6 +112,11 @@ class InitialBinding extends Bindings {
 
     Get.put<GetCurrentUserUseCase>(
       GetCurrentUserUseCase(repository: Get.find<AuthRepository>()),
+      permanent: true,
+    );
+
+    Get.put<GetPatientQrUseCase>(
+      GetPatientQrUseCase(repository: Get.find<AuthRepository>()),
       permanent: true,
     );
 
