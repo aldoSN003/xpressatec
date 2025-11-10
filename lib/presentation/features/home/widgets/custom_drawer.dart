@@ -23,7 +23,7 @@ class CustomDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  colorScheme.primary,
+                 Colors.lightBlue,
                   colorScheme.primaryContainer,
                 ],
                 begin: Alignment.topLeft,
@@ -70,7 +70,7 @@ class CustomDrawer extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.primary,
+                      Colors.lightBlue,
                       colorScheme.primaryContainer,
                     ],
                   ),

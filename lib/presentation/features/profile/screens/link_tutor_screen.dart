@@ -16,16 +16,13 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.primary,
-        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        backgroundColor: Colors.white10,
+        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         title: SvgPicture.asset(
           'assets/images/imagen.svg',
-          height: 32,
-          colorFilter: ColorFilter.mode(
-            colorScheme.onPrimary,
-            BlendMode.srcIn,
-          ),
+          height: 200,
+        
         ),
       ),
       body: Container(
@@ -34,7 +31,7 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              colorScheme.primary.withOpacity(0.16),
+              Colors.white10,
               colorScheme.surface,
             ],
           ),
@@ -51,7 +48,7 @@ class LinkTutorScreen extends GetView<LinkTutorController> {
                     'Enlazar tutor',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -199,7 +196,7 @@ class _QrContent extends StatelessWidget {
           FilledButton.icon(
             onPressed: onRefresh,
             style: FilledButton.styleFrom(
-              backgroundColor: colorScheme.primary,
+              backgroundColor: Colors.lightBlue,
               foregroundColor: colorScheme.onPrimary,
             ),
             icon: Icon(Icons.refresh, color: colorScheme.onPrimary),
