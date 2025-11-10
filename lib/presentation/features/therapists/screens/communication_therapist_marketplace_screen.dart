@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../controllers/communication_therapist_controller.dart';
 import '../models/communication_therapist.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class CommunicationTherapistMarketplaceScreen extends GetView<CommunicationTherapistController> {
   const CommunicationTherapistMarketplaceScreen({super.key});
@@ -19,19 +19,13 @@ class CommunicationTherapistMarketplaceScreen extends GetView<CommunicationThera
 
     return Scaffold(
       backgroundColor: const Color(0xFFE3F2FD),
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const XpressatecHeader(),
               const SizedBox(height: 16),
               Text(
                 'Terapeutas en comunicación',

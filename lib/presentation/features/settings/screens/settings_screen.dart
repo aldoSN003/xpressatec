@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/config/routes.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 
 class SettingsScreen extends StatelessWidget {
@@ -13,17 +13,11 @@ class SettingsScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 12),
           children: [
-            const XpressatecHeader(),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

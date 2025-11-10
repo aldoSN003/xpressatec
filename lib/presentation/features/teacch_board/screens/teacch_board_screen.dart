@@ -4,7 +4,7 @@ import 'package:xpressatec/core/constants/app_constants.dart';
 
 import 'package:xpressatec/presentation/features/teacch_board/controllers/teacch_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/widgets/category_detail_sheet.dart';
-import 'package:xpressatec/presentation/shared/widgets/xpressatec_header.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header_appbar.dart';
 import '../controllers/tts_controller.dart';
 import '../widgets/board_grid.dart';
 import '../widgets/selected_items_bar.dart';
@@ -49,10 +49,10 @@ class TeacchBoardScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: const XpressatecHeaderAppBar(),
       body: SafeArea(
         child: Column(
           children: [
-            const XpressatecHeader(),
             const SizedBox(height: 16),
             // ✨ Scrollable selected items bar (only visible when items are selected)
             SelectedItemsBar(),

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:xpressatec/domain/entities/appointment.dart';
 import 'package:xpressatec/presentation/features/calendar/controllers/tutor_calendar_controller.dart';
-import '../../../shared/widgets/xpressatec_header.dart';
+import '../../../shared/widgets/xpressatec_header_appbar.dart';
 
 class TutorCalendarScreen extends GetView<TutorCalendarController> {
   const TutorCalendarScreen({super.key});
@@ -14,19 +14,13 @@ class TutorCalendarScreen extends GetView<TutorCalendarController> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: SafeArea(
         child: Obx(() {
           if (!controller.isTutor) {
             return ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               children: [
-                const XpressatecHeader(),
                 const SizedBox(height: 16),
                 Text(
                   'Mis citas',
@@ -46,7 +40,6 @@ class TutorCalendarScreen extends GetView<TutorCalendarController> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               children: [
-                const XpressatecHeader(),
                 const SizedBox(height: 16),
                 Text(
                   'Mis citas',

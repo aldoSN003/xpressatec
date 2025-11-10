@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/auth/controllers/auth_controller.dart';
-import 'package:xpressatec/presentation/shared/widgets/xpressatec_header.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header_appbar.dart';
 
 class RegisterScreen extends GetView<AuthController> {
   const RegisterScreen({super.key});
@@ -23,12 +23,7 @@ class RegisterScreen extends GetView<AuthController> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-      ),
+      appBar: const XpressatecHeaderAppBar(showBack: true),
       body: SafeArea(
         // Use LayoutBuilder to create a responsive layout
         child: LayoutBuilder(
@@ -82,7 +77,6 @@ class RegisterScreen extends GetView<AuthController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const XpressatecHeader(),
             const SizedBox(height: 24),
 
             // Title
