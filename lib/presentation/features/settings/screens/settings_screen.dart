@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/config/routes.dart';
+import '../../../shared/widgets/xpressatec_header.dart';
 
 
 class SettingsScreen extends StatelessWidget {
@@ -9,12 +10,32 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Ajustes')),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        children: [
-          _buildSectionTitle(context, 'Preferencias'),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          children: [
+            const XpressatecHeader(),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Ajustes',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle(context, 'Preferencias'),
           SwitchListTile(
             secondary: const Icon(Icons.notifications_outlined),
             title: const Text('Notificaciones'),

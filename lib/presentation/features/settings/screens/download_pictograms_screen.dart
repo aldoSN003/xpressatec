@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import 'package:xpressatec/presentation/features/customization/controllers/customization_controller.dart';
 import 'package:xpressatec/presentation/features/settings/widgets/download_status_card.dart';
+import '../../../shared/widgets/xpressatec_header.dart';
 
 class DownloadPictogramsScreen extends StatefulWidget {
   const DownloadPictogramsScreen({super.key});
@@ -65,13 +65,10 @@ class _DownloadPictogramsScreenState extends State<DownloadPictogramsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white10,
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: SvgPicture.asset(
-          'assets/images/imagen.svg',
-          height: 180,
-        ),
+        automaticallyImplyLeading: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -100,6 +97,8 @@ class _DownloadPictogramsScreenState extends State<DownloadPictogramsScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const XpressatecHeader(),
+                    const SizedBox(height: 16),
                     Text(
                       'Descargar pictogramas',
                       style: theme.textTheme.headlineSmall?.copyWith(

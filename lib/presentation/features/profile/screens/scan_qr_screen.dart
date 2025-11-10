@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../controllers/scan_qr_controller.dart';
+import '../../../shared/widgets/xpressatec_header.dart';
 
 class ScanQrScreen extends GetView<ScanQrController> {
   const ScanQrScreen({super.key});
@@ -13,7 +14,12 @@ class ScanQrScreen extends GetView<ScanQrController> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Escanear QR'), centerTitle: true),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -28,14 +34,22 @@ class ScanQrScreen extends GetView<ScanQrController> {
         child: SafeArea(
           child: Column(
             children: [
+              const XpressatecHeader(),
+              const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      'Escanear QR',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
                       'Escanea el código del paciente para ver su información.',
-                      textAlign: TextAlign.center,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colorScheme.onSurface,
@@ -44,7 +58,6 @@ class ScanQrScreen extends GetView<ScanQrController> {
                     const SizedBox(height: 8),
                     Text(
                       'Apunta la cámara hacia el código QR y mantenla estable hasta que se detecte.',
-                      textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),

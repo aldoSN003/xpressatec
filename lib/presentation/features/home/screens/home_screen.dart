@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/chat/screens/chat_screen.dart';
 import 'package:xpressatec/presentation/features/home/controllers/navigation_controller.dart';
@@ -16,53 +14,36 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final NavigationController navController = Get.find();
     final theme = Theme.of(context);
-    final titleColor = theme.appBarTheme.titleTextStyle?.color ??
-        theme.textTheme.titleLarge?.color ??
-        theme.colorScheme.onSurface;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Obx(() {
-          switch (navController.currentSection) {
-            case NavigationSection.teacch:
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: titleColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SvgPicture.asset(
-                    'assets/images/imagen.svg',
-                    height: 200,
-                    semanticsLabel: 'Icono del tablero TEACCH',
-                  ),
-                ],
-              );
-            case NavigationSection.chat:
-              return const Text('Chat con Terapeuta');
-            case NavigationSection.statistics:
-              return const Text('Estadísticas');
-          }
-        }),
-      ),
-      drawer: const CustomDrawer(),
-      body: Obx(() {
-        switch (navController.currentSection) {
-          case NavigationSection.teacch:
-            return const TeacchBoardScreen();
-          case NavigationSection.chat:
-            return const ChatScreen();
-          case NavigationSection.statistics:
-            return const StatisticsScreen();
-        }
-      }),
-      bottomNavigationBar: const BottomNavBar(),
-    );
+    return Obx(() {
+      final section = navController.currentSection;
+      Widget body;
+
+      switch (section) {
+        case NavigationSection.teacch:
+          body = const TeacchBoardScreen();
+          break;
+        case NavigationSection.chat:
+          body = const ChatScreen();
+          break;
+        case NavigationSection.statistics:
+          body = const StatisticsScreen();
+          break;
+      }
+
+      return Scaffold(
+        appBar: section == NavigationSection.chat
+            ? null
+            : AppBar(
+                automaticallyImplyLeading: true,
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                foregroundColor: theme.colorScheme.onSurface,
+              ),
+        drawer: const CustomDrawer(),
+        body: body,
+        bottomNavigationBar: const BottomNavBar(),
+      );
+    });
   }
 }

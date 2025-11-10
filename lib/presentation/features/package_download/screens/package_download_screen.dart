@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../settings/widgets/download_status_card.dart';
 import '../controllers/audio_package_controller.dart';
+import '../../../shared/widgets/xpressatec_header.dart';
 
 class PackageDownloadScreen extends StatefulWidget {
   const PackageDownloadScreen({super.key});
@@ -38,13 +38,10 @@ class _PackageDownloadScreenState extends State<PackageDownloadScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white10,
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: SvgPicture.asset(
-          'assets/images/imagen.svg',
-          height: 180,
-        ),
+        automaticallyImplyLeading: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -197,6 +194,8 @@ class _PackageDownloadScreenState extends State<PackageDownloadScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const XpressatecHeader(),
+                    const SizedBox(height: 16),
                     Text(
                       'Descargar paquetes de audio',
                       style: theme.textTheme.headlineSmall?.copyWith(

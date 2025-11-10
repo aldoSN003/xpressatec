@@ -4,6 +4,7 @@ import 'package:xpressatec/core/constants/app_constants.dart';
 
 import 'package:xpressatec/presentation/features/teacch_board/controllers/teacch_controller.dart';
 import 'package:xpressatec/presentation/features/teacch_board/widgets/category_detail_sheet.dart';
+import 'package:xpressatec/presentation/shared/widgets/xpressatec_header.dart';
 import '../controllers/tts_controller.dart';
 import '../widgets/board_grid.dart';
 import '../widgets/selected_items_bar.dart';
@@ -48,17 +49,21 @@ class TeacchBoardScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // ✨ Scrollable selected items bar (only visible when items are selected)
-          SelectedItemsBar(),
-
-          Expanded(
-            child: BoardGrid(
-              cards: categoryCards,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const XpressatecHeader(),
+            const SizedBox(height: 16),
+            // ✨ Scrollable selected items bar (only visible when items are selected)
+            SelectedItemsBar(),
+            const SizedBox(height: 16),
+            Expanded(
+              child: BoardGrid(
+                cards: categoryCards,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       // ✨ NEW: Floating Action Button (visible only with 2+ items)
