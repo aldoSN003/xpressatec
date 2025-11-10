@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:xpressatec/presentation/features/chat/screens/chat_screen.dart';
-import 'package:xpressatec/presentation/features/customization/screens/customization_screen.dart';
 import 'package:xpressatec/presentation/features/home/controllers/navigation_controller.dart';
 import 'package:xpressatec/presentation/features/home/widgets/bottom_nav_bar.dart';
 import 'package:xpressatec/presentation/features/home/widgets/custom_drawer.dart';
@@ -47,8 +46,6 @@ class HomeScreen extends StatelessWidget {
               );
             case NavigationSection.chat:
               return const Text('Chat con Terapeuta');
-            case NavigationSection.customization:
-              return const Text('Personalización');
             case NavigationSection.statistics:
               return const Text('Estadísticas');
           }
@@ -61,8 +58,6 @@ class HomeScreen extends StatelessWidget {
             return const TeacchBoardScreen();
           case NavigationSection.chat:
             return const ChatScreen();
-          case NavigationSection.customization:
-            return const CustomizationScreen();
           case NavigationSection.statistics:
             return const StatisticsScreen();
         }
