@@ -128,12 +128,12 @@ class CustomDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Ajustes'),
-            onTap: () => Get.toNamed('/settings'),
+            onTap: () => Get.toNamed(Routes.settings),
           ),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: const Text('Acerca de'),
-            onTap: () => Get.toNamed('/about'),
+            onTap: () => Get.toNamed(Routes.about),
           ),
           ListTile(
             leading: const Icon(Icons.mic, color: Colors.orange),
