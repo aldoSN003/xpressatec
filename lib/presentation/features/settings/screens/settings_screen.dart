@@ -55,7 +55,10 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('Descargar paquetes de audio'),
             subtitle: const Text('Gestionar voces de asistentes'),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => Get.toNamed(Routes.packageDownload),
+            onTap: () => Get.toNamed(
+              Routes.packageDownload,
+              arguments: {'fromSettings': true},
+            ),
           ),
           const Divider(),
           _buildSectionTitle(context, 'Soporte'),
